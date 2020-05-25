@@ -5,8 +5,6 @@
 
 
 
-
-
 #define	NAME_MAX	100
 #define PHONE_MAX	100
 
@@ -20,18 +18,11 @@ typedef t_info *list_data;
 
 
 
-
-
-/*
-list_arr : array type list
-data_num : number of data 
-cur_i : current index of the array
-*/
 typedef	struct	s_list
 {
-	list_data	list_arr[LIST_MAX];
-	int			data_num;
-	int			cur_i;
+	list_data	list_arr[LIST_MAX];  // list_arr : array type list
+	int			data_num;  // number of data 
+	int			cur_i;  // current index of the array
 }				t_list;
 
 void		list_insert(t_list *list, list_data data)
@@ -79,8 +70,6 @@ list_data	list_remove(t_list *list)
 
 
 
-
-
 char		*ft_strcpy(char *s1, char *s2)
 {
 	int i;
@@ -118,8 +107,6 @@ int			ft_strcmp(char *s1, char *s2)
 			return (s1[i] - s2[i]);
 	return (s1[i] - s2[i]);
 }
-
-
 
 
 
