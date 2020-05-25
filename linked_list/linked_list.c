@@ -1,9 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef	int	list_data;
+
+
+typedef struct	s_point
+{
+	int			x;
+	int			y;
+}				t_point;
+
+typedef	t_point	*list_data;
 
 typedef int (*comp_func)(list_data, list_data);
+
+int			func(list_data left, list_data right)
+{
+	if (left->x > right->x)
+		return (1);
+	else if (left->x == right->x && left->y >= right->y)
+		return (1);
+	return (0);
+}
+
+
 
 typedef struct		s_node
 {
@@ -21,13 +40,6 @@ typedef struct		s_list
 }					t_list;
 
 
-
-int			left_data_is_big(int left, int right)
-{
-	if (left >= right)  // if left data is bigger than right data, return 1
-		return (1);
-	return (0);
-}
 
 void		compare_insert(t_list *list, list_data data)
 {
@@ -106,55 +118,84 @@ list_data	list_remove(t_list *list)
 }
 
 
+
+t_point		*make_point(int x, int y)
+{
+	t_point	*new_point;
+	
+	new_point = (t_point *)malloc(sizeof(t_point));
+	new_point->x = x;
+	new_point->y = y;
+	return (new_point);
+}
+
+void		show_point(t_point *point)
+{
+	printf("<%d, %d>\n", point->x, point->y);
+}
+
+
+
+// 152page. linked list
 int			main(void)
 {
 	t_list	list;
-	int		data;
+	t_point	*data;
 	 
 	list_init(&list);  // list reset
 	
-	list.f = left_data_is_big;  // compare function set
-
-	list_insert(&list, 1);  // insert data to list
-	list_insert(&list, 1);
-	list_insert(&list, 2);
-	list_insert(&list, 2);
-	list_insert(&list, 3);
-	list_insert(&list, 3);
+	list.f = func;  // compare function set
+	
+	data = make_point(1, 1);
+	list_insert(&list, data);  // insert data to list
+	data = make_point(1, 2);
+	list_insert(&list, data);
+	data = make_point(2, 2);
+	list_insert(&list, data);
+	data = make_point(2, 1);
+	list_insert(&list, data);
 
 	printf("number of data : %d\n", list.data_num);
 	if (list_first_node(&list, &data)) // find first data in list
 	{
-		printf("%d ", data);
+		show_point(data);
 		while (list_next_node(&list, &data))  // find next data in list
-			printf("%d ", data);
+			show_point(data);
 	}
-	printf("\n\n");
 	
 	if (list_first_node(&list, &data)) // find first data in list
 	{
-		if (data == 2)
+		if (data->x == 2)
+		{
+			free(data);
 			list_remove(&list);  // remove node
+		}
 		while (list_next_node(&list, &data))  // find next data in list
-			if (data == 2)
+			if (data->x == 2)
+			{
+				free(data);
 				list_remove(&list);  // remove node
+			}
 	}
 	
-	printf("number of data : %d\n", list.data_num);
+	printf("\nnumber of data : %d\n", list.data_num);
 	if (list_first_node(&list, &data)) // find first data in list
 	{
-		printf("%d ", data);
+		show_point(data);
 		while (list_next_node(&list, &data))  // find next data in list
-			printf("%d ", data);
+			show_point(data);
 	}
-	printf("\n\n");
 	
 	if (list_first_node(&list, &data)) // find first data in list
 	{
+		free(data);
 		list_remove(&list);  // remove node
 		while (list_next_node(&list, &data))  // find next data in list
+		{
+			free(data);
 			list_remove(&list);  // remove node
+		}
 	}
 	free(list.head);
-	printf("number of data : %d\n", list.data_num);;
+	printf("\nnumber of data : %d\n", list.data_num);;
 }
