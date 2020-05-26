@@ -186,6 +186,7 @@ int			main(void)
 			show_point(data);
 	}
 	
+	printf("\n----- data delete -----\n");
 	if (list_first_node(&list, &data)) // find first data in list
 	{
 		free(data);
@@ -197,5 +198,5 @@ int			main(void)
 		}
 	}
 	free(list.head);
-	printf("\nnumber of data : %d\n", list.data_num);;
+	printf("number of data : %d\n", list.data_num);;
 }

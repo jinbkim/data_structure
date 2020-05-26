@@ -1,7 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef	int list_data;
+
+
+typedef	struct	s_info
+{
+	int			live_num;
+	char		name[32];
+}				t_info;
+
+typedef	t_info	*list_data;
+
+
 
 typedef struct		s_node
 {
@@ -22,8 +32,6 @@ typedef	struct	s_list
 void		list_init(t_list *list)
 {
 	list->tail = NULL;  // tail node reset
-	//list->cur = NULL;
-	//list->before = NULL;
 	list->data_num = 0;  // number of data reset
 }
 
@@ -101,66 +109,102 @@ list_data	list_remove(t_list *list)
 
 
 
+char		*ft_strcpy(char *s1, char *s2)
+{
+	int i;
+	
+	i = -1;
+	while (s2[++i])
+		s1[i] = s2[i];
+	s1[i] = '\0';
+	return (s1);
+}
+
+t_info	*make_man(int live_num, char *name)
+{
+	t_info	*new_man;
+	
+	new_man = (t_info *)malloc(sizeof(t_info));
+	new_man->live_num = live_num;
+	ft_strcpy(new_man->name, name);
+	return (new_man);
+}
+
+void	show_man(t_info *man)
+{
+	printf("name : %s\n", man->name);
+	printf("live number : %d\n", man->live_num);
+}
+
+int			ft_strcmp(char *s1, char *s2)
+{
+	int i;
+	
+	i = -1;
+	while (s1[++i] && s2[i])
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+	return (s1[i] - s2[i]);
+}
+
+void	search_man(t_list *list, char *name, int day)
+{
+	t_info	*data;
+	int		i;
+	
+	list_first_node(list, &data);
+	while (ft_strcmp(list->cur->data->name, name))
+		list_next_node(list, &data);
+	i = -1;
+	while (++i < day)
+		list->cur = list->cur->next;
+	printf("%d day after, %s -> %s\n", day, name,list->cur->data->name);
+}
+
+
+
+// 177page. linked list
 int			main(void)
 {
 	t_list	list;
-	int		data;
+	t_info	*data;
 	int		i;
-	
-	list_init(&list);
-	
-	list_insert(&list, 3);  // insert data to list
-	list_insert(&list, 4);
-	list_insert(&list, 5);
-	list_insert_front(&list, 2);  // insert data to list front
-	list_insert_front(&list, 1);
+	int		data_num;
+
+	list_init(&list);  // list reset
+	data = make_man(950807, "kim");
+	list_insert(&list, data);  // insert data to list
+	data = make_man(961234, "jin");
+	list_insert(&list, data);  // insert data to list
+	data = make_man(972345, "bum");
+	list_insert(&list, data);  // insert data to list
+	data = make_man(983456, "kkk");
+	list_insert(&list, data);  // insert data to list
 	
 	printf("number of data : %d\n", list.data_num);
-	if (list_first_node(&list, &data)) // find first data in list
-	{
-		printf("%d ", data);
-		i = -1;
-		while (++i < 3 * list.data_num - 1)
-			if (list_next_node(&list, &data))  // find next data in list
-				printf("%d ", data);
-	}
-	list_first_node(&list, &data); // find first data in list
-		if (data % 2 == 0)
-			list_remove(&list);  // remove node
+	list_first_node(&list, &data);  // find first data in list
+	show_man(data);
 	i = -1;
-	while (++i < list.data_num - 1)
+	while (++i < 2 * list.data_num - 1)
 	{
-		list_next_node(&list, &data);
-		if (data % 2 == 0)
-			list_remove(&list);  // remove node
+		list_next_node(&list, &data);  // find next data in list
+		show_man(data);
 	}
-/*	
-	if (list_first_node(&list, &data)) // find first data in list
-	{
-		if (data % 2 == 0)
-			list_remove(&list);  // remove node
-		i = -1;
-		while (++i < list.data_num - 1)
-			if (list_next_node(&list, &data) && data % 2 == 0)
-				list_remove(&list);  // remove node
-	}
-*/	
-	printf("\n\nnumber of data : %d\n", list.data_num);
-	if (list_first_node(&list, &data)) // find first data in list
-	{
-		printf("%d ", data);
-		i = -1;
-		while (++i < list.data_num - 1)
-			if (list_next_node(&list, &data))  // find next data in list
-				printf("%d ", data);
-	}
+	printf("\n");
 	
-	if (list_first_node(&list, &data)) // find first data in list
+	search_man(&list, "kim", 5);
+	
+	printf("\n----- data delete -----\n");
+	list_first_node(&list, &data); // find first data in list
+	free(data);
+	list_remove(&list);  // remove node
+	data_num = list.data_num;
+	i = -1;
+	while (++i < data_num)
 	{
-		list_remove(&list);
-		i = -1;
-		while (++i < list.data_num - 1)
-			if (list_next_node(&list, &data))  // find next data in list
-				list_remove(&list);
+		list_next_node(&list, &data);  // find next data in list
+		free(data);
+		list_remove(&list);  // remove node
 	}
+	printf("number of data : %d\n", list.data_num);
 }

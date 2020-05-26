@@ -20,7 +20,7 @@ typedef t_info *list_data;
 
 typedef	struct	s_list
 {
-	list_data	list_arr[LIST_MAX];  // list_arr : array type list
+	list_data	list_arr[LIST_MAX];  // array type list
 	int			data_num;  // number of data 
 	int			cur_i;  // current index of the array
 }				t_list;
