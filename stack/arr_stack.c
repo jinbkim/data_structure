@@ -44,7 +44,7 @@ stack_data	stack_pop(t_stack *stack)
 }
 
 
-
+// 212page. stack
 int			main(void)
 {
 	t_stack	stack;

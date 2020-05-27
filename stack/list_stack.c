@@ -58,8 +58,19 @@ stack_data	stack_pop(t_stack *stack)
 	return (remem_data);
 }
 
+stack_data	stack_peek(t_stack *stack)
+{
+	if (stack_is_empty(stack))  // if stack is empty
+	{
+		printf("stack is empty!\n");
+		exit (-1);
+	}
+	return (stack->head->data);
+}
 
 
+
+// 217page. stack
 int			main(void)
 {
 	t_stack	stack;
