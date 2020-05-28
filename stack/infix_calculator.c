@@ -32,13 +32,6 @@ void		stack_push(t_stack *stack, stack_data data)
 	stack->head = new_node;
 }
 
-int			stack_is_empty(t_stack *stack)
-{
-	if (stack->head)  // if stack is not empty
-		return (0);
-	return (1);
-}
-
 stack_data	stack_pop(t_stack *stack)
 {
 	t_node		*remem_node;
@@ -56,6 +49,13 @@ stack_data	stack_pop(t_stack *stack)
 	stack->head = stack->head->next;
 	free(remem_node);
 	return (remem_data);
+}
+
+int			stack_is_empty(t_stack *stack)
+{
+	if (stack->head)  // if stack is not empty
+		return (0);
+	return (1);
 }
 
 stack_data	stack_peek(t_stack *stack)
@@ -106,7 +106,7 @@ int		comp_priority(char op1, char op2)
 		return (0);
 }
 
-char	*use_stack(t_stack *stack, char *postfix, char oper)
+char	*operator_hand(t_stack *stack, char *postfix, char oper)
 {
 	char	data;
 
@@ -143,7 +143,7 @@ char	*ft_strcpy(char *s1, char *s2)
 void	infix_to_postfix(char *equ)
 {
 	t_stack	stack;
-	char	*postfix;
+	char	*postfix;  // data to be converted
 	char	*remem_postfix;  // remember postfix adress
 	int		i;
 	
@@ -158,7 +158,7 @@ void	infix_to_postfix(char *equ)
 		if (ft_isdigit(equ[i]))
 			*postfix++ = equ[i];
 		else
-			postfix = use_stack(&stack, postfix, equ[i]);
+			postfix = operator_hand(&stack, postfix, equ[i]);
 	}
 	while (!stack_is_empty(&stack))  // until the stack is empty, repeat
 		*postfix++ = stack_pop(&stack);
