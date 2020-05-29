@@ -1,8 +1,9 @@
-## 스택
-- LIFO (Last In, First Out)
-- push : 스택의 top에 데이터 추가 
-- pop : 스택의 top에 있는 데이터 삭제
-- peek : 스택의 top에 있는 데이터 출력  
+## 스택 ADT (Last In, First Out)
+- stack_init : 스택 초기화 
+- stack_is_empty : 스택이 비었는지 확인 
+- stack_push : 스택의 top에 데이터 추가 
+- stack_pop : 스택의 top에 있는 데이터 삭제
+- stack_peek : 스택의 top에 있는 데이터 출력  
 ### 스택 사용법 
 - 데이터의 개수가 정해져있고, 데이터의 삽입과 삭제가 많지 않으면  -> 배열기반 스택 
 - 데이터의 개수가 정해져 있지않고, 데이터의 삽입과 삭제가 많으면  -> 연결리스트기반 스택  
