@@ -126,7 +126,7 @@ int			main(void)
 {
 	t_deque	dq;
 	
-	deque_init(&dq);
+	deque_init(&dq);  // deque reset
 	
 	deque_add_head(&dq, 1);  // add data to deque head
 	deque_add_head(&dq, 2);
