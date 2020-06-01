@@ -94,7 +94,7 @@ void		show_data(int data)
 }
 
 
-
+// 317page. tree
 int			main(void)
 {
 	t_bt_node	*node1;

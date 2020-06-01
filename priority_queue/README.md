@@ -1,9 +1,8 @@
 ## 우선순위 큐 ADT (우선순위가 높은 데이터가 먼저 나옴)
--
--
--
--
--
+- p_queue_init : 우선순위 큐 초기화 
+- p_queue_enter : 우선순위 큐에 데이터 추가 
+- delete_p_queue : 큐의 우선순위가 높은 데이터 삭제
+- p_queue_is_empty : 우선순위 큐가 비었는지 확인
 ### 힙
 - complete binary tree : node가 위에서 아래로,  
   왼쪽에서 오른쪽으로 순서대로 채워진  이진트리
@@ -24,6 +23,6 @@
 ### 배열기반 힙
 - 인덱스 0인 요소는 비워둠. 
 - 힙에 저장된 노드의 개수와 마지막 노드의 인덱스는 일치 
-- left child node의 인덱스 = parent node 안덱스 * 2
-- right child node의 인덱스 = parent node 안덱스 * 2 + 1
-- parent node의 인덱스 = child node 안덱스 / 2
+- left child node의 인덱스 = parent node 인덱스 * 2
+- right child node의 인덱스 = parent node 인덱스 * 2 + 1
+- parent node의 인덱스 = child node 인덱스 / 2

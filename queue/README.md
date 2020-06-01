@@ -3,7 +3,7 @@
 - queue_is_full : 큐가 가득 찼는지 확인 
 - queue_is_empty : 큐가 비었는지 확인 
 - enter_queue : 큐에 데이터 추가 
-- delete_queue : 먼저 넣은 큐의 데이터 삭제
+- delete_queue : 큐의 먼저 넣은 데이터 삭제
 - queue_peek : 먼저 넣은 큐의 데이터 출력
 ### 큐 사용법 
 - 데이터의 개수가 정해져있고, 데이터의 삽입과 삭제가 많지 않으면  -> 배열기반 큐

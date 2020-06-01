@@ -240,6 +240,7 @@ int			calculation_tree(t_bt_node *e_tree)
 
 
 
+// 332page. tree
 int			main(void)
 {
 	char		express[] = "12+7*";
