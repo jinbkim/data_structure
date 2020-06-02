@@ -5,12 +5,14 @@
 typedef	char	*heap_data;
 typedef	int		(*priority_comp_func)(heap_data, heap_data);  // function pointer
 
-typedef	struct	s_p_queue
+typedef	struct	s_heap
 {
 	int					data_num;  // number of data
 	heap_data			heap_arr[HEAP_SIZE];	
 	priority_comp_func	f;
-}				t_p_queue;
+}				t_heap;
+
+typedef	t_heap	t_p_queue;
 
 
 

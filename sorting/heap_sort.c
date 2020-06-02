@@ -114,6 +114,7 @@ void	show_arr(int *arr, int size)
 
 
 
+// 386page. sorting
 int		main(void)
 {
 	int arr[] = {3, 2, 4, 1};

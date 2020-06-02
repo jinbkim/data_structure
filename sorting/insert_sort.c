@@ -20,7 +20,7 @@ void	insert_sort(int *arr, int size)
 		j = i;
 		while(--j >= 0)
 		{
-			if (arr[j + 1] < arr[j])
+			if (arr[j + 1] < arr[j])  // higher value is lower priority.
 				arr_swap(&arr[j], &arr[j + 1]);
 			else
 				break ;
@@ -40,6 +40,7 @@ void	show_arr(int *arr, int size)
 
 
 
+// 383page. sorting
 int		main(void)
 {
 	int arr[] = {3, 2, 4, 1};
