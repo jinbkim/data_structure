@@ -19,25 +19,44 @@ void	ft_swap(int *a, int *b)
 	*b = temp;
 }
 
+int		median_pivot(int *arr, int left, int right)
+{
+	int	example[] = {left, (left + right) / 2, right};
+	
+	if (arr[1] < arr[0])
+		ft_swap(&example[1], &example[0]);
+	if (arr[2] < arr[1])
+		ft_swap(&example[2], &example[1]);
+	if (arr[1] < arr[0])
+		ft_swap(&example[1], &example[0]);
+	return (example[1]);
+}
+
 int		partition(int *arr, int left, int right)
 {
+	int pivot_idx;
 	int	pivot;
-	int	low;
-	int	high;
-	
-	pivot = arr[left];
+	int low;
+	int high;
+
+	pivot_idx = median_pivot(arr, left, right);  // store median index
+	pivot = arr[pivot_idx];
 	low = left + 1;
 	high = right;
+	ft_swap(&arr[pivot_idx], &arr[left]);  // move pivot to left
+	
 	while (low <= high)
 	{
-		// increase low until a value greater than pivot is found
-		while (low <= high && arr[low] <= pivot)
+		// keeping low <= high, increase low 
+		// until we find low value bigger than pivot
+		while (low <= right && arr[low] <= pivot)
 			low++;
-		// decrease high until a value less than the pivot is found	
+		// keeping pivot < high, decrease high
+		// until we find high value smaller than pivot
 		while (left < high && pivot <= arr[high])
 			high--;
 		if (low <= high)  // change location if not crossed
-			ft_swap(&arr[low], &arr[high]);
+			ft_swap(&arr[low], &arr[high]);	
 	}
 	ft_swap(&arr[left], &arr[high]);
 	return (high);
@@ -69,10 +88,10 @@ void	show_arr(int *arr, int size)
 
 
 
-// 406page. sorting
+// 411page. sorting
 int		main(void)
 {
-	int arr[] = {3, 3, 3};
+	int arr[] = {3, 2, 4, 1};
 
 	show_arr(arr, sizeof(arr) / sizeof(int));
 	quick_sort(arr, 0, sizeof(arr) / sizeof(int) - 1);

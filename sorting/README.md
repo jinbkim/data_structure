@@ -41,27 +41,38 @@
 - 비교연산 빅오 = 데이터이동 빅오 : nlog2(n)
 ### 6. 퀵정렬
 #### 알고리즘
-- 4개의 데이터가 배열에 있다고 가정 (3 2 4 1)
-1. 가장 왼쪽의 데이터를 pivot(기준점)으로 정함  
-  (***3(pivot)*** 2 4 1)
-2. 피벗을 제외한 가장왼쪽의 데이터를 low로 정함  
-  (3 ***2(low)*** 4 1)
-3. 가장 오른쪽 데이터를 high로 정함  
-  (3 2 4 ***1(high)***)
+- 4개의 데이터가 배열에 있다고 가정 (***3(left)*** 2 4 ***1(right)***)
+1. left 데이터, 중간에 있는 데이터, right 데이터중,  
+- 중간값을 가진 데이터를 pivot으로 정함  
+- (3 ***2*** 4 1)
+- left :0, right :3, pivot index : 1, pivot : 2
+2. left 다음 데이터를 low로, right 데이터를 high로 정함
+- (3 ***2*** 4 ***1***)
+- left :0, right :3, pivot index : 1, pivot : 2, low :1, high : 3
+3. pivot index와 left 데이터 교환
+- (***3*** ***2*** 4 1) -> (***2*** ***3*** 4 1)
+- left :0, right :3, pivot index : 1, pivot : 2, low :1, high : 3
 4. 피벗보다 우선순위가 낮은 데이터를 만날때까지,  
-  low <= high를 유지하며, low는 오른쪽으로 이동  
-  (3 2 ***4(low)*** 1)
+  low <= high를 유지하며, low를 오른쪽으로 이동  
+- (2 ***3*** 4 1) 
+- left :0, right :3, pivot index : 1, pivot : 2, low :1, high : 3
 5. 피벗보다 우선순위가 높은 데이터를 만날때까지,  
-  pivot < high를 유지하며, high는 왼쪽으로 이동  
-  (3 2 4 ***1(high)***)
-6. low <= high 이면, low와 high 위치의 데이터 교환  
-  (3 2 ***4(low)*** ***1(high)***) - > (3 2 ***1*** ***4***)
-7. 그이후에도 low <= high 이면 4 ~ 6 과정을 반복  
-  (3 2 ***1(low)*** ***4(high)***) -> (3 2 ***1(high)*** ***4(low)***) 
-8. pivot과 high위치에 있는 데이터 교환  
-  (***3(pivot)*** 2 ***1(high)*** 4) -> (***1(pivot)*** 2 ***3(high)*** 4)
+  left < high를 유지하며, high를 왼쪽으로 이동  
+- (2 3 4 ***1***)
+- left :0, right :3, pivot index : 1, pivot : 2, low :1, high : 3
+6. low <= high 이면, low와 high 위치의 데이터 교환
+- (2 ***3*** 4 ***1***) -> (2 ***1*** 4 ***3***)
+- left :0, right :3, pivot index : 1, pivot : 2, low :1, high : 3
+7. low <= high 를 만족할때까지 4 ~ 6 과정을 반복  
+- (2 ***1*** ***4*** 3)
+- left :0, right :3, pivot index : 1, pivot : 2, low :2, high : 1
+8. left와 high 위치에 있는 데이터 교환  
+- (***2*** ***1*** 4 3) -> (***1*** ***2*** 4 3)
+- left :0, right :3, pivot index : 1, pivot : 2, low :2, high : 1
 9. high 위치를 pivot으로 정함  
-  (1 2 ***3(pivot)*** 4)
+- (1 ***2*** 4 3)
+- pivot : 1 
 10. pivot을 제외한 범위에서 다시 1 ~ 9 과정을 반복하며 정렬
+
 #### 성능
 - 비교연산 빅오 = 데이터이동 빅오 : nlog2(n)
