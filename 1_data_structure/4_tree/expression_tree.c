@@ -114,13 +114,9 @@ void		inorder_traverse(t_bt_node *node, show_func f)
 	if (!node)
 		return ;
 	
-	if (node->left && node->right)
-		printf("( ");
 	inorder_traverse(node->left, f);
 	f(node->data);
 	inorder_traverse(node->right, f);
-	if (node->left && node->right)
-		printf(") ");
 }
 
 void		postorder_traverse(t_bt_node *node, show_func f)
