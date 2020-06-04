@@ -94,6 +94,7 @@ void		show_data(int data)
 }
 
 
+
 // 317page. tree
 int			main(void)
 {
