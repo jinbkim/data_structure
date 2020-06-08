@@ -128,6 +128,7 @@ void	add_edge(t_al_graph *graph, int from, int to)
 
 
 
+// 547page. graph
 int		main(void)
 {
 	t_al_graph graph;
