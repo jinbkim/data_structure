@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define STACK_LEN	100
+#define QUEUE_SIZE 100
 
 typedef	int	list_data;
 
@@ -21,6 +21,15 @@ typedef	struct	s_list
 	sort_func	f;
 }				t_list;
 
+typedef	int	queue_data;
+
+typedef	struct	s_queue
+{
+	int			front;  // front of queue
+	int			rear;  // rear of queue
+	queue_data	q_arr[QUEUE_SIZE];
+}				t_queue;
+
 typedef	struct	s_al_graph
 {
 	int			vertex_num;
@@ -31,29 +40,7 @@ typedef	struct	s_al_graph
 
 enum {A, B, C, D, E, F, G};
 
-typedef	int	stack_data;
 
-typedef struct	s_stack
-{
-	stack_data	stack_arr[STACK_LEN];  // array type stack
-	int			top_idx;  // top index of stack
-}				t_stack;
-
-
-
-int			left_data_is_big(int d1, int d2)
-{
-	if (d1 > d2)
-		return (1);
-	return (0);
-}
-
-void		list_init(t_list *list, sort_func f)
-{
-	list->head = (t_node *)malloc(sizeof(t_node));  // make dummy node
-	list->head->next = NULL;
-	list->f = f;
-}
 
 void		ft_memset(void *ptr, int value, size_t num)
 {
@@ -64,6 +51,20 @@ void		ft_memset(void *ptr, int value, size_t num)
 	i = -1;
 	while (++i < (int)(num / sizeof(int)))
 		arr[i] = value;
+}
+
+void		list_init(t_list *list, sort_func f)
+{
+	list->head = (t_node *)malloc(sizeof(t_node));  // make dummy node
+	list->head->next = NULL;
+	list->f = f;
+}
+
+int			left_data_is_big(int d1, int d2)
+{
+	if (d1 > d2)
+		return (1);
+	return (0);
 }
 
 void		list_insert(t_list *list, list_data data)
@@ -87,6 +88,12 @@ void		list_insert(t_list *list, list_data data)
 	current_node->next = new_node;
 }
 
+void	queue_init(t_queue *q)
+{
+	q->front = 0;
+	q->rear = 0;
+}
+
 int			list_first_node(t_list *list, list_data *data)
 {
 	if (!list->head->next)  // if node is not exist
@@ -105,29 +112,38 @@ int			list_next_node(t_list *list, list_data *data)
 	return (1);
 }
 
-void		stack_push(t_stack *stack, stack_data data)
+int		queue_is_full(t_queue *q)
 {
-	stack->stack_arr[++(stack->top_idx)] = data;
+	if (q->rear == QUEUE_SIZE - 1)  // if queueu is full
+		return (1);
+	return (0);
 }
 
-int			stack_is_empty(t_stack *stack)
+void	enter_queue(t_queue *q, queue_data data)
 {
-	if (stack->top_idx >= 0)  // if stack is not empty
-		return (0);
-	return (1);
-}
-
-stack_data	stack_pop(t_stack *stack)
-{
-	int		remem_idx;
-	
-	if (stack_is_empty(stack))  // if stack is empty
+	if (queue_is_full(q))
 	{
-		printf("stack is empty!\n");
+		printf("queue is full!\n");
 		exit (-1);
 	}
-	remem_idx = (stack->top_idx)--;
-	return (stack->stack_arr[remem_idx]);
+	q->q_arr[++(q->rear)] = data;
+}
+
+int			queue_is_empty(t_queue *q)
+{
+	if (q->front == q->rear)
+		return (1);
+	return (0);
+}
+
+queue_data	delete_queue(t_queue *q)
+{
+	if (queue_is_empty(q))
+	{
+		printf("queue is empty!\n");
+		exit (-1);
+	}
+	return (q->q_arr[++(q->front)]);
 }
 
 void		free_all(t_al_graph *graph)
@@ -176,19 +192,18 @@ void		add_edge(t_al_graph *graph, int from, int to)
 
 void		show_graph(t_al_graph *graph)
 {
-	t_node	*current_node;
 	int		i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
 		printf("%c -> ", i + 'A');
-		current_node = graph->list[i].head;  // head : starting point
-		while (current_node->next)
+		graph->list[i].cur = graph->list[i].head;  // head : starting point
+		while (graph->list[i].cur->next)
 		{
-			current_node = current_node->next;  // current node reset
-			printf("%c", current_node->data + 'A');
-			if (current_node->next)
+			graph->list[i].cur = graph->list[i].cur->next;  // current node reset
+			printf("%c", graph->list[i].cur->data + 'A');
+			if (graph->list[i].cur->next)
 				printf(", ");
 		}
 		printf("\n");
@@ -206,46 +221,26 @@ int			visit_vertex(t_al_graph *graph, int visit)
 	return (0);
 }
 
-void		dfs_graph(t_al_graph *graph, int vertex)
+void		bfs_graph(t_al_graph *graph, int vertex)
 {
-	t_stack	stack;
+	t_queue	q;
 	int		next_vertex;
-	int		visit_flag;
 	
-	stack.top_idx = -1;
-	visit_vertex(graph, vertex);
-	stack_push(&stack, vertex);
+	queue_init(&q);  // queue reset
 	
-	while (list_first_node(&graph->list[vertex], &next_vertex))
+	visit_vertex(graph, vertex);	
+	while (list_first_node(&(graph->list[vertex]), &next_vertex))
 	{
-		visit_flag = 0;
-		if (visit_vertex(graph, next_vertex))  // unvisited
-		{
-			stack_push(&stack, next_vertex);
-			vertex = next_vertex;
-			visit_flag = 1;
-		}
+		if (visit_vertex(graph, next_vertex))
+			enter_queue(&q, next_vertex);
+		while (list_next_node(&(graph->list[vertex]), &next_vertex))
+			if (visit_vertex(graph, next_vertex))
+				enter_queue(&q, next_vertex);
+	
+		if (queue_is_empty(&q))
+			break ;
 		else
-		{
-			while (list_next_node(&(graph->list[vertex]), &next_vertex))
-			{
-				if (visit_vertex(graph, next_vertex))
-				{
-					stack_push(&stack, vertex);
-					vertex = next_vertex;
-					visit_flag = 1;
-					break ;
-				}
-			}
-		}
-		
-		if (!visit_flag)
-		{
-			if (stack_is_empty(&stack))
-				break ;
-			else
-				vertex = stack_pop(&stack);
-		}
+			vertex = delete_queue(&q);
 	}
 	
 	ft_memset(graph->visit_info, 0, sizeof(int) * graph->vertex_num);  // reset visit history to 0
@@ -254,12 +249,11 @@ void		dfs_graph(t_al_graph *graph, int vertex)
 
 
 
-// 567page. graph
-int			main(void)
+// 576page. graph
 {
-	t_al_graph graph;
+	t_al_graph	graph;
 	
-	graph_init(&graph, 7);  // adjacent list graph reset
+	graph_init(&graph, 7);
 	
 	add_edge(&graph, A, B);  // connact vertex A and B
 	add_edge(&graph, A, D);
@@ -271,10 +265,10 @@ int			main(void)
 	
 	show_graph(&graph);
 	
-	dfs_graph(&graph, A);  // graph depth first search
-	dfs_graph(&graph, C);
-	dfs_graph(&graph, E);
-	dfs_graph(&graph, G);
+	bfs_graph(&graph, A);  // graph breadth first search
+	bfs_graph(&graph, C);
+	bfs_graph(&graph, E);
+	bfs_graph(&graph, G);
 	
 	free_all(&graph);
 }
