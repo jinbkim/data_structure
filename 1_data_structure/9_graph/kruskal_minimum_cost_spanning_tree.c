@@ -118,6 +118,22 @@ void		enter_p_queue(t_p_queue *pq, heap_data data)
 	pq->heap_arr[idx] = data;
 }
 
+int			get_high_priority_child_idx(t_p_queue *pq, int idx)
+{
+	if (idx * 2 > pq->data_num)  // if child node is not exist
+		return (0);
+	else if (idx * 2 == pq->data_num)  // if lef child node is last node
+		return (idx * 2);
+	else
+	{
+		// if left child node has a higher priority than right child node,
+		if (pq->f(pq->heap_arr[idx * 2], pq->heap_arr[idx * 2 + 1]) > 0)
+			return (idx * 2 + 1);
+		else
+			return (idx * 2);
+	}
+}
+
 heap_data	delete_p_queue(t_p_queue *pq)
 {
 	heap_data	remem_data;
@@ -143,6 +159,13 @@ heap_data	delete_p_queue(t_p_queue *pq)
 	return (remem_data);
 }
 
+int			p_queue_is_empty(t_p_queue *pq)
+{
+	if (pq->data_num)
+		return (0);
+	return (1);
+}
+
 int			list_first_node(t_list *list, list_data *data)
 {
 	if (!list->head->next)  // if node is not exist
@@ -154,7 +177,7 @@ int			list_first_node(t_list *list, list_data *data)
 
 int			list_next_node(t_list *list, list_data *data)
 {
-	if (!list->cur->next)  // if next node is not exist
+	if (list->cur->next == NULL)  // if next node is not exist
 		return (0);
 	list->cur = list->cur->next;
 	*data = list->cur->data;
@@ -183,8 +206,54 @@ list_data	list_remove(t_list *list)
 		list->cur = list->cur->next;
 	
 	free(remem_node);
-	(list->data_num)--;
 	return (remem_data);
+}
+
+void		list_insert(t_list *list, list_data data)
+{	
+	t_node	*new_node;
+	t_node	*current_node;
+	
+	new_node = (t_node *)malloc(sizeof(t_node));
+	new_node->data = data;
+	
+	// find position of the new node
+	current_node = list->head;  // head : starting point
+	while (current_node->next && list->f(data, current_node->next->data))
+		current_node = current_node->next;
+
+	// insert data after head node
+	new_node->next = current_node->next;
+	if (current_node->next)  // if node is exist
+		current_node->next->before = new_node;
+	new_node->before = current_node;
+	current_node->next = new_node;
+}
+
+void		stack_push(t_stack *stack, stack_data data)
+{
+	stack->stack_arr[++(stack->top_idx)] = data;
+}
+
+
+int			stack_is_empty(t_stack *stack)
+{
+	if (stack->top_idx >= 0)  // if stack is not empty
+		return (0);
+	return (1);
+}
+
+stack_data	stack_pop(t_stack *stack)
+{
+	int		remem_idx;
+	
+	if (stack_is_empty(stack))  // if stack is empty
+	{
+		printf("stack is empty!\n");
+		exit (-1);
+	}
+	remem_idx = (stack->top_idx)--;
+	return (stack->stack_arr[remem_idx]);
 }
 
 
@@ -222,22 +291,15 @@ void		add_edge(t_al_graph *graph, int from, int to, int weight)
 
 void		remove_edge_one_way(t_al_graph *graph, int from, int to)
 {
-	int	vertex;
+	graph->list[from].cur = graph->list[from].head;  // head : starting point
 	
-	if (list_first_node(&(graph->list[from]), &vertex))
+	while (graph->list[from].cur->next)
 	{
-		if (vertex == to)
-			list_remove(&(graph->list[from]));
-		else
+		graph->list[from].cur = graph->list[from].cur->next;
+		if (graph->list[from].cur->data == to)
 		{
-			while (list_next_node(&(graph->list[from]), &vertex)))
-			{
-				if (vertex == to)
-				{
-					list_remove(&(graph->list[from]));
-					return ;
-				}
-			}
+			list_remove(&(graph->list[from]));
+			return ;
 		}
 	}
 }
@@ -260,30 +322,154 @@ int			visit_vertex(t_al_graph *graph, int visit)
 	return (0);
 }
 
-int			no_edge(t_al_graph *graph, int vertex1, int vertex2)
+int			exist_edge(t_al_graph *graph, int vertex1, int vertex2)
 {
 	t_stack stack;
-	int		visit_vertex;
 	int		next_vertex;
+	int		visit_flag;
 
-	visit_vertex = 1;
 	stack.top_idx = -1;
-	visit_vertex(graph, visit_vertex)
+	visit_vertex(graph, vertex1);
+	stack_push(&stack, vertex1);
+	
+	while (list_first_node(&graph->list[vertex1], &next_vertex))
+	{
+		visit_flag = 0;
+		if (next_vertex == vertex2)
+		{
+			// initialize visit information before returning the function
+			ft_memset(graph->visit_info, 0, sizeof(int) * graph->vertex_num);
+			return (1);
+		}
+		
+		if (visit_vertex(graph, next_vertex))
+		{
+			stack_push(&stack, vertex1);
+			vertex1 = next_vertex;
+			visit_flag = 1;
+		}
+		else
+		{
+			while (list_next_node(&(graph->list[vertex1]), &next_vertex))
+			{
+				printf("abc\n");
+				if (next_vertex == vertex2)
+				{
+					ft_memset(graph->visit_info, 0, sizeof(int) * graph->vertex_num);
+					return (1);
+				}
+				
+				if (visit_vertex(graph, next_vertex))
+				{
+					stack_push(&stack, vertex1);
+					vertex1 = next_vertex;
+					visit_flag = 1;
+				}
+			}
+		}
+		
+		if (!visit_flag)
+		{
+			if (stack_is_empty(&stack))
+				break ;
+			else
+				vertex1 = stack_pop(&stack);
+		}
+	}
+	
+	ft_memset(graph->visit_info, 0, sizeof(int) * graph->vertex_num);
+
+	return (0);
+}
+
+void		restore_edge(t_al_graph *graph, int from, int to)
+{
+	list_insert(&(graph->list[from]), to);
+	list_insert(&(graph->list[to]), from);
+	(graph->edge_num)++;
 }
 
 void		conversion_kruskal(t_al_graph *graph)
 {
 	t_edge	remem_edge[32];
 	t_edge	edge;
+	int		edge_i;
+	int		i;
+	
+	edge_i = -1;
+	i = -1;
 	
 	// repeat until forming minimum cost spanning tree
 	// MST edge number + 1 = vertex number
 	while (graph->edge_num + 1 != graph->vertex_num)
 	{
+		// store edge with the highest weight in the priority queue
 		edge = delete_p_queue(&(graph->w_info_q));
+		// delete edge taken out of priority queue from graph
 		remove_edge(graph, edge.vertex1, edge.vertex2);
-		if (no_edge(graph, edge.vertex1, edge.vertex2))
+		if (exist_edge(graph, edge.vertex1, edge.vertex2))
+		{
+			restore_edge(graph, edge.vertex1, edge.vertex2);
+			remem_edge[++edge_i] = edge;
+		}
 	}
+	
+	// data restoration
+	while (++i < edge_i)
+		enter_p_queue(&(graph->w_info_q), remem_edge[i]);
+}
+
+void		show_graph(t_al_graph *graph)
+{
+	int		i;
+	
+	i = -1;
+	while (++i < graph->vertex_num)
+	{
+		printf("%c -> ", i + 'A');
+		graph->list[i].cur = graph->list[i].head;  // head : starting point
+		while (graph->list[i].cur->next)
+		{
+			graph->list[i].cur = graph->list[i].cur->next;  // current node reset
+			printf("%c", graph->list[i].cur->data + 'A');
+			if (graph->list[i].cur->next)
+				printf(", ");
+		}
+		printf("\n");
+	}
+}
+
+void		show_edge_info(t_al_graph *graph)
+{
+	t_p_queue	copy_q;
+	t_edge		edge;
+	
+	copy_q = graph->w_info_q;
+	while(p_queue_is_empty(&copy_q))
+	{
+		edge = delete_p_queue(&copy_q);
+		printf("(%c - %c), weight : %d\n", edge.vertex1 + 'A', edge.vertex2 + 'A', edge.weight);
+	}
+}
+
+void		free_all(t_al_graph *graph)
+{
+	t_node	*current_node;
+	int		i;
+	
+	i = -1;
+	while (++i < graph->vertex_num)
+	{
+		current_node = graph->list[i].head;  // head : starting point
+		while (current_node->next)
+		{
+			current_node = current_node->next;  // current node reset
+			free(current_node->before);
+		}
+		free(current_node);
+	}
+	free(graph->list);
+	free(graph->visit_info);
 }
 
 
@@ -307,4 +493,9 @@ int			main(void)
 	add_edge(&graph, F, E, 13);
 	
 	conversion_kruskal(&graph);
+	
+	show_graph(&graph);
+	show_edge_info(&graph);
+	
+	free_all(&graph);
 }
