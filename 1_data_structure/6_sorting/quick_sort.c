@@ -23,11 +23,11 @@ int		median_pivot(int *arr, int left, int right)
 {
 	int	example[] = {left, (left + right) / 2, right};
 	
-	if (arr[1] < arr[0])
+	if (arr[example[1]] < arr[example[0]])
 		ft_swap(&example[1], &example[0]);
-	if (arr[2] < arr[1])
+	if (arr[example[2]] < arr[example[1]])
 		ft_swap(&example[2], &example[1]);
-	if (arr[1] < arr[0])
+	if (arr[example[1]] < arr[example[0]])
 		ft_swap(&example[1], &example[0]);
 	return (example[1]);
 }
