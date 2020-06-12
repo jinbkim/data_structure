@@ -3,60 +3,52 @@
 
 #define	HEAP_SIZE	100001
 
-typedef	struct	s_info
+typedef	struct	s_point
 {
-	char		name[101];
-	int			age;
-	int			order;  // sort by order if they are same age
-}				t_info;
+	int			x;
+	int			y;
+}				t_point;
 
-typedef	t_info	*heap_data;
+typedef	t_point	*heap_data;
 
-typedef	int		(*priority_comp)(heap_data, heap_data);  // function pointer
+typedef	int		(*priority_comp_func)(heap_data, heap_data);  // function pointer
 
-typedef	struct		s_p_queue
+typedef	struct	s_p_queue
 {
-	int				data_num;  // number of data
-	heap_data		heap_arr[HEAP_SIZE];	
-	priority_comp	f;
-}					t_p_queue;
+	int					data_num;  // number of data
+	heap_data			heap_arr[HEAP_SIZE];	
+	priority_comp_func	f;
+}				t_p_queue;
 
 
 
-t_info		**info_input(int num)
+t_point		**point_input(int size)
 {
-	t_info	**mans;
+	t_point	**point;
 	int		i;
-	
-	mans = (t_info **)malloc(sizeof(t_info *) * (num + 1));
+
+	point = (t_point **)malloc(sizeof(t_point *) * (size + 1));
 	i = -1;
-	while(++i < num + 1)
+	while(++i < size)
 	{
-		mans[i] = (t_info *)malloc(sizeof(t_info));
-		mans[i]->order = i;
-	}
-	
-	i = -1;
-	while(++i < num)
-	{
-		scanf("%d %s", &(mans[i]->age), mans[i]->name);
+		point[i] = (t_point *)malloc(sizeof(t_point));
+		scanf("%d %d", &(point[i]->x), &(point[i]->y));
 		getchar();
 	}
 	
-	return (mans);
+	return (point);
 }
 
 
 
 int			comp_func(heap_data a, heap_data b)
 {
-	if (a->age != b->age)
-		return (a->age - b->age);
-	else
-		return (a->order - b->order);
+	if (a->x != b->x)
+		return (a->x - b->x);
+	return (a->y - b->y);
 }
 
-void		p_queue_init(t_p_queue *pq, priority_comp f)
+void		p_queue_init(t_p_queue *pq, priority_comp_func f)
 {
 	pq->data_num = 0;
 	pq->f = f;
@@ -124,57 +116,55 @@ heap_data	delete_p_queue(t_p_queue *pq)
 	return (remem_data);
 }
 
-void		heap_sort(t_info **mans, int num, priority_comp f)
+void	heap_sort(t_point **arr, int size, priority_comp_func f)
 {
 	t_p_queue	pq;
 	int			i;
 	
 	p_queue_init(&pq, f);
-	
 	i = -1;
-	while(++i < num)
-		enter_p_queue(&pq, mans[i]);
-		
+	while (++i < size)
+		enter_p_queue(&pq, arr[i]);
 	i = -1;
-	while(++i < num)
-		mans[i] = delete_p_queue(&pq);
-}
+	while(++i < size)
+		arr[i] = delete_p_queue(&pq);
+}	
 
 
 
-void		print_man(t_info **mans, int num)
-{
-	int	i;
-	
-	i = -1;
-	while (++i < num)
-		printf("%d %s\n", mans[i]->age, mans[i]->name);
-}
-
-
-
-void		free_all(t_info **mans, int num)
+void		print_point(t_point **point, int size)
 {
 	int i;
 	
 	i = -1;
-	while (++i < num + 1)
-		free(mans[i]);
-	free(mans);
+	while(++i < size)
+		printf("%d %d\n", point[i]->x, point[i]->y);
+}
+
+
+
+void		free_all(t_point **point, int num)
+{
+	int i;
+	
+	i = -1;
+	while (++i < num)
+		free(point[i]);
+	free(point);
 }
 
 
 
 int			main(void)
 {
-	t_info	**mans;
-	int	num;
-	
-	scanf("%d", &num);
+	t_point	**point;
+	int		size;
+
+	scanf("%d", &size);
 	getchar();
 	
-	mans = info_input(num);
-	heap_sort(mans, num, comp_func);
-	print_man(mans, num);
-	free_all(mans, num);
+	point = point_input(size);
+	heap_sort(point, size, comp_func);
+	print_point(point, size);
+	free_all(point, size);
 }

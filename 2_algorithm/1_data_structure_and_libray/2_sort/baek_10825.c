@@ -5,58 +5,69 @@
 
 typedef	struct	s_info
 {
-	char		name[101];
-	int			age;
-	int			order;  // sort by order if they are same age
+	char		name[11];
+	int			korean;
+	int			english;
+	int			math;
 }				t_info;
 
 typedef	t_info	*heap_data;
 
-typedef	int		(*priority_comp)(heap_data, heap_data);  // function pointer
+typedef	int		(*priority_comp_func)(heap_data, heap_data);  // function pointer
 
-typedef	struct		s_p_queue
+typedef	struct	s_p_queue
 {
-	int				data_num;  // number of data
-	heap_data		heap_arr[HEAP_SIZE];	
-	priority_comp	f;
-}					t_p_queue;
+	int					data_num;  // number of data
+	heap_data			heap_arr[HEAP_SIZE];	
+	priority_comp_func	f;
+}				t_p_queue;
 
 
 
-t_info		**info_input(int num)
+t_info		**info_input(int size)
 {
-	t_info	**mans;
+	t_info	**info;
 	int		i;
-	
-	mans = (t_info **)malloc(sizeof(t_info *) * (num + 1));
+
+	info = (t_info **)malloc(sizeof(t_info *) * (size + 1));
 	i = -1;
-	while(++i < num + 1)
+	while(++i < size)
 	{
-		mans[i] = (t_info *)malloc(sizeof(t_info));
-		mans[i]->order = i;
-	}
-	
-	i = -1;
-	while(++i < num)
-	{
-		scanf("%d %s", &(mans[i]->age), mans[i]->name);
+		info[i] = (t_info *)malloc(sizeof(t_info));
+		scanf("%s %d %d %d", info[i]->name, &info[i]->korean, &info[i]->english, &info[i]->math);
 		getchar();
 	}
 	
-	return (mans);
+	return (info);
 }
 
 
+
+int			ft_strcmp(char *s1, char *s2)
+{
+	int i;
+	
+	i = -1;
+	while(s1[++i] && s2[i])
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+	return (s1[i] - s2[i]);
+}
 
 int			comp_func(heap_data a, heap_data b)
 {
-	if (a->age != b->age)
-		return (a->age - b->age);
-	else
-		return (a->order - b->order);
+	if (a->korean != b->korean)
+		return (b->korean - a->korean);
+	else if (a->english != b->english)
+		return (a->english - b->english);
+	else if (a->math != b->math)
+		return (b->math - a->math);
+	return (ft_strcmp(a->name, b->name));
 }
 
-void		p_queue_init(t_p_queue *pq, priority_comp f)
+
+
+void		p_queue_init(t_p_queue *pq, priority_comp_func f)
 {
 	pq->data_num = 0;
 	pq->f = f;
@@ -124,57 +135,55 @@ heap_data	delete_p_queue(t_p_queue *pq)
 	return (remem_data);
 }
 
-void		heap_sort(t_info **mans, int num, priority_comp f)
+void	heap_sort(t_info **arr, int size, priority_comp_func f)
 {
 	t_p_queue	pq;
 	int			i;
 	
 	p_queue_init(&pq, f);
-	
 	i = -1;
-	while(++i < num)
-		enter_p_queue(&pq, mans[i]);
-		
+	while (++i < size)
+		enter_p_queue(&pq, arr[i]);
 	i = -1;
-	while(++i < num)
-		mans[i] = delete_p_queue(&pq);
-}
+	while(++i < size)
+		arr[i] = delete_p_queue(&pq);
+}	
 
 
 
-void		print_man(t_info **mans, int num)
-{
-	int	i;
-	
-	i = -1;
-	while (++i < num)
-		printf("%d %s\n", mans[i]->age, mans[i]->name);
-}
-
-
-
-void		free_all(t_info **mans, int num)
+void		print_info(t_info **info, int size)
 {
 	int i;
 	
 	i = -1;
-	while (++i < num + 1)
-		free(mans[i]);
-	free(mans);
+	while(++i < size)
+		printf("%s\n", info[i]->name);
+}
+
+
+
+void		free_all(t_info **info, int num)
+{
+	int i;
+	
+	i = -1;
+	while (++i < num)
+		free(info[i]);
+	free(info);
 }
 
 
 
 int			main(void)
 {
-	t_info	**mans;
-	int	num;
-	
-	scanf("%d", &num);
+	t_info	**info;
+	int		size;
+
+	scanf("%d", &size);
 	getchar();
 	
-	mans = info_input(num);
-	heap_sort(mans, num, comp_func);
-	print_man(mans, num);
-	free_all(mans, num);
+	info = info_input(size);
+	heap_sort(info, size, comp_func);
+	print_info(info, size);
+	free_all(info, size);
 }

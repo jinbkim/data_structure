@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #define	HEAP_SIZE	100
+
 typedef	int		heap_data;
 typedef	int		(*priority_comp_func)(heap_data, heap_data);  // function pointer
 
