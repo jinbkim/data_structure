@@ -17,7 +17,7 @@ typedef	struct	s_queue
 void	queue_init(t_queue *q)
 {
 	q->front = 0;
-	q->rear = 0;
+	q->rear = -1;
 }
 
 int		queue_is_full(t_queue *q)
@@ -51,7 +51,7 @@ queue_data	delete_queue(t_queue *q)
 		printf("queue is empty!\n");
 		exit (-1);
 	}
-	return (q->q_arr[++(q->front)]);
+	return (q->q_arr[(q->front)++]);
 }
 
 queue_data	queue_peek(t_queue *q)
