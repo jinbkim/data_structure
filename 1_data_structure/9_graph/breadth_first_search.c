@@ -21,6 +21,14 @@ typedef	struct	s_list
 	sort_func	f;
 }				t_list;
 
+typedef	struct	s_al_graph
+{
+	int			vertex_num;
+	int			edge_num;
+	int			*visit_info;
+	t_list		*list;  // adjacent list
+}				t_al_graph;
+
 typedef	int	queue_data;
 
 typedef	struct	s_queue
@@ -29,14 +37,6 @@ typedef	struct	s_queue
 	int			rear;  // rear of queue
 	queue_data	q_arr[QUEUE_SIZE];
 }				t_queue;
-
-typedef	struct	s_al_graph
-{
-	int			vertex_num;
-	int			edge_num;
-	int			*visit_info;
-	t_list		*list;  // adjacent list
-}				t_al_graph;
 
 enum {A, B, C, D, E, F, G};
 
@@ -70,37 +70,28 @@ int			left_data_is_big(int d1, int d2)
 void		list_insert(t_list *list, list_data data)
 {	
 	t_node	*new_node;
-	t_node	*current_node;
+	t_node	*cur;
 	
 	new_node = (t_node *)malloc(sizeof(t_node));
 	new_node->data = data;
 	
 	// find position of the new node
-	current_node = list->head;  // head : starting point
-	while (current_node->next && list->f(data, current_node->next->data))
-		current_node = current_node->next;
+	cur = list->head;  // head : starting point
+	while (cur->next && list->f(data, cur->next->data))
+		cur = cur->next;
 
 	// insert data after head node
-	new_node->next = current_node->next;
-	if (current_node->next)  // if node is exist
-		current_node->next->before = new_node;
-	new_node->before = current_node;
-	current_node->next = new_node;
+	new_node->next = cur->next;
+	if (cur->next)  // if node is exist
+		cur->next->before = new_node;
+	new_node->before = cur;
+	cur->next = new_node;
 }
 
 void	queue_init(t_queue *q)
 {
 	q->front = 0;
 	q->rear = 0;
-}
-
-int			list_first_node(t_list *list, list_data *data)
-{
-	if (!list->head->next)  // if node is not exist
-		return (0);
-	list->cur = list->head->next;
-	*data = list->cur->data;
-	return (1);	
 }
 
 int			list_next_node(t_list *list, list_data *data)
@@ -148,24 +139,23 @@ queue_data	delete_queue(t_queue *q)
 
 void		free_all(t_al_graph *graph)
 {
-	t_node	*current_node;
+	t_node	*cur;
 	int		i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
-		current_node = graph->list[i].head;  // head : starting point
-		while (current_node->next)
+		cur = graph->list[i].head;  // head : starting point
+		while (cur->next)
 		{
-			current_node = current_node->next;  // current node reset
-			free(current_node->before);
+			cur = cur->next;  // current node reset
+			free(cur->before);
 		}
-		free(current_node);
+		free(cur);
 	}
 	free(graph->list);
 	free(graph->visit_info);
 }
-
 
 
 void		graph_init(t_al_graph *graph, int vertex_num)
@@ -192,18 +182,19 @@ void		add_edge(t_al_graph *graph, int from, int to)
 
 void		show_graph(t_al_graph *graph)
 {
+	t_node	*cur;
 	int		i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
 		printf("%c -> ", i + 'A');
-		graph->list[i].cur = graph->list[i].head;  // head : starting point
-		while (graph->list[i].cur->next)
+		cur = graph->list[i].head;  // head : starting point
+		while (cur->next)
 		{
-			graph->list[i].cur = graph->list[i].cur->next;  // current node reset
-			printf("%c", graph->list[i].cur->data + 'A');
-			if (graph->list[i].cur->next)
+			cur = cur->next;  // current node reset
+			printf("%c", cur->data + 'A');
+			if (cur->next)
 				printf(", ");
 		}
 		printf("\n");
@@ -228,21 +219,21 @@ void		bfs_graph(t_al_graph *graph, int vertex)
 	
 	queue_init(&q);  // queue reset
 	
-	visit_vertex(graph, vertex);	
-	while (list_first_node(&(graph->list[vertex]), &next_vertex))
+	visit_vertex(graph, vertex);
+	while (1)
 	{
-		if (visit_vertex(graph, next_vertex))
-			enter_queue(&q, next_vertex);
+		// starting point : head(dummy node)
+		graph->list[vertex].cur = graph->list[vertex].head;
 		while (list_next_node(&(graph->list[vertex]), &next_vertex))
 			if (visit_vertex(graph, next_vertex))
 				enter_queue(&q, next_vertex);
-	
+
 		if (queue_is_empty(&q))
 			break ;
 		else
 			vertex = delete_queue(&q);
 	}
-	
+
 	ft_memset(graph->visit_info, 0, sizeof(int) * graph->vertex_num);  // reset visit history to 0
 	printf("\n");
 }
@@ -250,6 +241,7 @@ void		bfs_graph(t_al_graph *graph, int vertex)
 
 
 // 576page. graph
+int			main(void)
 {
 	t_al_graph	graph;
 	
@@ -266,8 +258,11 @@ void		bfs_graph(t_al_graph *graph, int vertex)
 	show_graph(&graph);
 	
 	bfs_graph(&graph, A);  // graph breadth first search
+	bfs_graph(&graph, B);
 	bfs_graph(&graph, C);
+	bfs_graph(&graph, D);
 	bfs_graph(&graph, E);
+	bfs_graph(&graph, F);
 	bfs_graph(&graph, G);
 	
 	free_all(&graph);

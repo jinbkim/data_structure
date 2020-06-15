@@ -69,31 +69,22 @@ void		ft_memset(void *ptr, int value, size_t num)
 void		list_insert(t_list *list, list_data data)
 {	
 	t_node	*new_node;
-	t_node	*current_node;
+	t_node	*cur;
 	
 	new_node = (t_node *)malloc(sizeof(t_node));
 	new_node->data = data;
 	
 	// find position of the new node
-	current_node = list->head;  // head : starting point
-	while (current_node->next && list->f(data, current_node->next->data))
-		current_node = current_node->next;
+	cur = list->head;  // head : starting point
+	while (cur->next && list->f(data, cur->next->data))
+		cur = cur->next;
 
 	// insert data after head node
-	new_node->next = current_node->next;
-	if (current_node->next)  // if node is exist
-		current_node->next->before = new_node;
-	new_node->before = current_node;
-	current_node->next = new_node;
-}
-
-int			list_first_node(t_list *list, list_data *data)
-{
-	if (!list->head->next)  // if node is not exist
-		return (0);
-	list->cur = list->head->next;
-	*data = list->cur->data;
-	return (1);	
+	new_node->next = cur->next;
+	if (cur->next)  // if node is exist
+		cur->next->before = new_node;
+	new_node->before = cur;
+	cur->next = new_node;
 }
 
 int			list_next_node(t_list *list, list_data *data)
@@ -132,19 +123,19 @@ stack_data	stack_pop(t_stack *stack)
 
 void		free_all(t_al_graph *graph)
 {
-	t_node	*current_node;
+	t_node	*cur;
 	int		i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
-		current_node = graph->list[i].head;  // head : starting point
-		while (current_node->next)
+		cur = graph->list[i].head;  // head : starting point
+		while (cur->next)
 		{
-			current_node = current_node->next;  // current node reset
-			free(current_node->before);
+			cur = cur->next;  // current node reset
+			free(cur->before);
 		}
-		free(current_node);
+		free(cur);
 	}
 	free(graph->list);
 	free(graph->visit_info);
@@ -176,31 +167,31 @@ void		add_edge(t_al_graph *graph, int from, int to)
 
 void		show_graph(t_al_graph *graph)
 {
-	t_node	*current_node;
+	t_node	*cur;
 	int		i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
 		printf("%c -> ", i + 'A');
-		current_node = graph->list[i].head;  // head : starting point
-		while (current_node->next)
+		cur = graph->list[i].head;  // head : starting point
+		while (cur->next)
 		{
-			current_node = current_node->next;  // current node reset
-			printf("%c", current_node->data + 'A');
-			if (current_node->next)
+			cur = cur->next;  // current node reset
+			printf("%c", cur->data + 'A');
+			if (cur->next)
 				printf(", ");
 		}
 		printf("\n");
 	}
 }
 
-int			visit_vertex(t_al_graph *graph, int visit)
+int			visit_vertex(t_al_graph *graph, int vertex)
 {
-	if (!graph->visit_info[visit])
+	if (!graph->visit_info[vertex])
 	{
-		graph->visit_info[visit] = 1;
-		printf("%c ", visit + 'A');
+		graph->visit_info[vertex] = 1;
+		printf("%c ", vertex + 'A');
 		return (1);
 	}
 	return (0);
@@ -212,30 +203,26 @@ void		dfs_graph(t_al_graph *graph, int vertex)
 	int		next_vertex;
 	int		visit_flag;
 	
-	stack.top_idx = -1;
+	stack.top_idx = -1;  // stack reset
+
+	// start vertex
 	visit_vertex(graph, vertex);
 	stack_push(&stack, vertex);
 	
-	while (list_first_node(&graph->list[vertex], &next_vertex))
+	while (1)
 	{
 		visit_flag = 0;
-		if (visit_vertex(graph, next_vertex))  // unvisited
+
+		// starting point : head(dummy node)
+		graph->list[vertex].cur = graph->list[vertex].head;
+		while (list_next_node(&(graph->list[vertex]), &next_vertex))
 		{
-			stack_push(&stack, next_vertex);
-			vertex = next_vertex;
-			visit_flag = 1;
-		}
-		else
-		{
-			while (list_next_node(&(graph->list[vertex]), &next_vertex))
+			if (visit_vertex(graph, next_vertex))  // unvisited
 			{
-				if (visit_vertex(graph, next_vertex))
-				{
-					stack_push(&stack, vertex);
-					vertex = next_vertex;
-					visit_flag = 1;
-					break ;
-				}
+				stack_push(&stack, vertex);
+				vertex = next_vertex;
+				visit_flag = 1;
+				break ;
 			}
 		}
 		
@@ -272,8 +259,11 @@ int			main(void)
 	show_graph(&graph);
 	
 	dfs_graph(&graph, A);  // graph depth first search
+	dfs_graph(&graph, B);
 	dfs_graph(&graph, C);
+	dfs_graph(&graph, D);
 	dfs_graph(&graph, E);
+	dfs_graph(&graph, F);
 	dfs_graph(&graph, G);
 	
 	free_all(&graph);

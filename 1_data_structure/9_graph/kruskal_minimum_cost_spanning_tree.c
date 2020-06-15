@@ -4,8 +4,6 @@
 #define	HEAP_SIZE	100
 #define STACK_LEN	100
 
-enum {A, B, C, D, E, F};
-
 typedef	int	list_data;
 
 typedef struct		s_node
@@ -50,6 +48,8 @@ typedef	struct	s_al_graph
 	t_list		*list;  // adjacent list
 	t_p_queue	w_info_q;
 }				t_al_graph;
+
+enum {A, B, C, D, E, F};
 
 typedef	int	stack_data;
 

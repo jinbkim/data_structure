@@ -46,60 +46,41 @@ void	list_init(t_list *list, sort_func f)
 void		list_insert(t_list *list, list_data data)
 {	
 	t_node	*new_node;
-	t_node	*current_node;
+	t_node	*cur;
 	
 	new_node = (t_node *)malloc(sizeof(t_node));
 	new_node->data = data;
 	
 	// find position of the new node
-	current_node = list->head;  // head : starting point
-	while (current_node->next && list->f(data, current_node->next->data))
-		current_node = current_node->next;
+	cur = list->head;  // head : starting point
+	while (cur->next && list->f(data, cur->next->data))
+		cur = cur->next;
 
 	// insert data after head node
-	new_node->next = current_node->next;
-	if (current_node->next)  // if node is exist
-		current_node->next->before = new_node;
-	new_node->before = current_node;
-	current_node->next = new_node;
-}
-
-void	free_all(t_al_graph *graph)
-{
-	t_node	*current_node;
-	int		i;
-	
-	i = -1;
-	while (++i < graph->vertex_num)
-	{
-		current_node = graph->list[i].head;  // head : starting point
-		while (current_node->next)
-		{
-			current_node = current_node->next;  // current node reset
-			free(current_node->before);
-		}
-		free(current_node);
-	}
-	free(graph->list);
+	new_node->next = cur->next;
+	if (cur->next)  // if node is exist
+		cur->next->before = new_node;
+	new_node->before = cur;
+	cur->next = new_node;
 }
 
 
 
 void	show_graph(t_al_graph *graph)
 {
-	t_node	*current_node;
+	t_node	*cur;
 	int		i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
 		printf("%c -> ", i + 'A');
-		current_node = graph->list[i].head;  // head : starting point
-		while (current_node->next)
+		cur = graph->list[i].head;  // head : starting point
+		while (cur->next)
 		{
-			current_node = current_node->next;  // current node reset
-			printf("%c", current_node->data + 'A');
-			if (current_node->next)
+			cur = cur->next;  // current node reset
+			printf("%c", cur->data + 'A');
+			if (cur->next)
 				printf(", ");
 		}
 		printf("\n");
@@ -124,6 +105,25 @@ void	add_edge(t_al_graph *graph, int from, int to)
 	list_insert(&(graph->list[from]), to);
 	list_insert(&(graph->list[to]), from);
 	(graph->edge_num)++;
+}
+
+void	free_all(t_al_graph *graph)
+{
+	t_node	*cur;
+	int		i;
+	
+	i = -1;
+	while (++i < graph->vertex_num)
+	{
+		cur = graph->list[i].head;  // head : starting point
+		while (cur->next)
+		{
+			cur = cur->next;  // current node reset
+			free(cur->before);
+		}
+		free(cur);
+	}
+	free(graph->list);
 }
 
 
