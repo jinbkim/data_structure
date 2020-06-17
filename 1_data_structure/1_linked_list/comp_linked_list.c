@@ -34,9 +34,9 @@ typedef struct		s_list
 int			func1(list_data d1, list_data d2)
 {
 	if (d1->x != d2->x)
-		return (d2->x - d2->x);
+		return (d2->x - d1->x);
 	else
-		return (d2->y - d2->y);
+		return (d2->y - d1->y);
 }
 
 void		list_init(t_list *list, comp_func f)
@@ -56,7 +56,8 @@ void		list_insert_comp(t_list *list, list_data data)
 	
 	// find position
 	cur = list->head;  // head : starting point
-	while (cur->next && list->f(data, cur->next->data) > 0)
+	// repeat when priority of data is lower then next node
+	while (cur->next && list->f(data, cur->next->data) < 0)
 		cur = cur->next;
 
 	// connection
@@ -122,13 +123,13 @@ int			main(void)
 	
 	list_init(&list, func1);  // list reset
 	
-	data = make_point(1, 1);
+	data = make_point(2, 2);
 	list_insert_comp(&list, data);  // insert data to list
+	data = make_point(2, 1);
+	list_insert_comp(&list, data);
 	data = make_point(1, 2);
 	list_insert_comp(&list, data);
-	data = make_point(2, 2);
-	list_insert_comp(&list, data);
-	data = make_point(2, 1);
+	data = make_point(1, 1);
 	list_insert_comp(&list, data);
 	
 	// show all data

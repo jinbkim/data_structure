@@ -149,6 +149,7 @@ int			ft_strlen(char *s)
 	i = 0;
 	while (s[i])
 		i++;
+
 	return (i);
 }
 
@@ -172,12 +173,16 @@ t_bt_node	*make_e_tree(char *exp)
 	{
 		if (ft_isdigit(exp[i]))
 			node = make_bt_node(exp[i] - '0');  // conversion for calculation
+		
+		// if operator, take two operands from stack
+		// make them child nodes
 		else
 		{
 			node = make_bt_node(exp[i]);
 			make_right_sub_free(node, stack_pop(&stack));
 			make_left_sub_free(node, stack_pop(&stack));
 		}
+		
 		stack_push(&stack, node);
 	}
 	
@@ -223,6 +228,7 @@ int			main(void)
 	printf("\n");	
 	postorder_traverse(e_tree, show_data);
 	printf("\n");
+	
 	printf("result : %d\n", cal_tree(e_tree));
 	
 	delete_tree(e_tree);
