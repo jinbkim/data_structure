@@ -1,19 +1,37 @@
-## 큐 ADT (FIRST In, First Out) 
-- queue_init : 큐 초기화
-- queue_is_full : 큐가 가득 찼는지 확인 
-- queue_is_empty : 큐가 비었는지 확인 
-- enter_queue : 큐에 데이터 추가 
-- delete_queue : 큐의 먼저 넣은 데이터 삭제
-- queue_peek : 먼저 넣은 큐의 데이터 출력
-### 큐 사용법 
-- 데이터의 개수가 정해져있고, 데이터의 삽입과 삭제가 많지 않으면  -> 배열기반 큐
-- 데이터의 개수가 정해져 있지않고, 데이터의 삽입과 삭제가 많으면  -> 연결리스트기반 큐
-## 덱 ADT
-- 앞 뒤로 넣고, 뺄 수 있는 자료구조
-- 양방향 연결리스트로 구현
-- deque_init : 덱 초기화
-- deque_is_empty : 덱 비었는지 확인 
-- deque_add_head : 덱 앞으로 데이터 추가 
-- deque_add_tail : 덱 뒤로 데이터 추가
-- deque_remove_head : 덱 맨앞 데이터 삭제
-- deque_remove_tail : 덱 맨뒤 데이터 삭제
+## 1. 배열 기반 큐
+### (void) queue_init(t_queue *q)
+- 큐의 맨앞과 맨뒤 초기화
+### (void) enter_queue(t_queue *q, queue_data data)
+- 큐의 맨뒤에 데이터 삽입
+### (int) queue_is_empty(t_queue *q) 
+- 큐의 맨앞과 맨뒤가 같으면 큐가 빈것이므로 1반환, 아니면 0반환 
+### (queue_data) delete_queue(t_queue *q)
+- 큐의 맨앞 데이터 제거
+## 2. 연결리스트 기반 큐
+### (void) queue_init(t_queue *q)
+- 큐의 맨앞을 NULL로 초기화 
+### (void) enter_queue(t_queue *q, queue_data data)
+- 새로운 노드를 생성하고 그노드에 데이터 삽입
+- 큐의 맨뒤와 노드를 연결하고 큐의 맨앞과 맨뒤 위치조정
+### (int) queue_is_empty(t_queue *q) 
+- 큐의 맨앞이 NULL이면 빈것이므로 1반환, 아니면 0반환 
+### (queue_data) delete_queue(t_queue *q)
+- 큐의 맨앞 위치 조정
+- 맨앞이었던 노드 메모리 해제
+## 3. 양방향 큐인 덱
+### (void) deque_init(t_deque *deque)
+- 덱의 머리와 꼬리 초기화
+### (int) deque_is_empty(t_deque *deque)
+- 덱이 비어있으면 0, 아니면 1반환 
+### (void) deque_add_head(t_deque *deque, deque_data data)
+- 새로운 노드를 생성하고 그노드에 데이터 삽입
+- 덱의 맨앞과 노드를 연결하고 덱의 맨앞과 맨뒤 위치조정
+### (void) deque_add_tail(t_deque *deque, deque_data data)
+- 새로운 노드를 생성하고 그노드에 데이터 삽입
+- 덱의 맨뒤와 노드를 연결하고 덱의 맨앞과 맨뒤 위치조정
+### (deque_data) deque_remove_head(t_deque *deque)
+- 덱의 맨앞 위치 조정
+- 맨앞이었던 노드 메모리 해제 
+### (deque_data) deque_remove_tail(t_deque *deque)
+- 덱의 맨뒤 위치 조정
+- 맨뒤였던 노드 메모리 해제 
