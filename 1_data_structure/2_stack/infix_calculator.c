@@ -1,17 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef	char	stack_data;
+typedef	int	stack_data;
 
-typedef struct	s_node
+typedef struct		s_node
 {
 	stack_data		data;
-	struct s_node	*next;  // next node address
+	struct s_node	*next;
 }					t_node;
 
 typedef struct	s_stack
 {
-	t_node		*head;  // head node of stack
+	t_node		*head;
 }				t_stack;
 
 
@@ -32,16 +32,17 @@ void		stack_push(t_stack *stack, stack_data data)
 	stack->head = new_node;
 }
 
+int			stack_is_empty(t_stack *stack)
+{
+	if (stack->head)
+		return (0);
+	return (1);
+}
+
 stack_data	stack_pop(t_stack *stack)
 {
 	t_node		*remem_node;
 	stack_data	remem_data;
-	
-	if (stack_is_empty(stack))  // if stack is empty
-	{
-		printf("stack is empty!\n");
-		exit (-1);
-	}
 	
 	remem_node = stack->head;  // remember node to be deleted
 	remem_data = stack->head->data;  // remember data to be deleted
@@ -49,23 +50,6 @@ stack_data	stack_pop(t_stack *stack)
 	stack->head = stack->head->next;
 	free(remem_node);
 	return (remem_data);
-}
-
-int			stack_is_empty(t_stack *stack)
-{
-	if (stack->head)  // if stack is not empty
-		return (0);
-	return (1);
-}
-
-stack_data	stack_peek(t_stack *stack)
-{
-	if (stack_is_empty(stack))  // if stack is empty
-	{
-		printf("stack is empty!\n");
-		exit (-1);
-	}
-	return (stack->head->data);
 }
 
 
@@ -82,145 +66,130 @@ int		ft_strlen(char *s)
 
 int		ft_isdigit(char c)
 {
-	if ('0' <= c && c <= '9')  // if c is natural number
+	if ('0' <= c && c <= '9')
 		return (1);
 	return (0);
 }
 
-int		set_priority(char oper)
+int			set_priority(char op)
 {
-	if (oper == '(')
+	if (op == '(')
 		return (1);
-	else if (oper == '+' || oper == '-')
+	else if (op == '+' || op =='-')
 		return (2);
-	else if (oper == '*' || oper == '/')
+	else if (op == '*' || op == '/')
 		return (3);
 	return (0);
 }
 
-int		comp_priority(char op1, char op2)
+int			priority_comp(char op1, char op2)
 {
-	if (set_priority(op1) >= set_priority(op2))  // if op1 is bigger than op2(priority)
-		return (1);
-	else
-		return (0);
+	return (set_priority(op1) - set_priority(op2));	
 }
 
-char	*operator_hand(t_stack *stack, char *postfix, char oper)
-{
-	char	data;
-
-	if (oper == '(')
-		stack_push(stack, oper);
-	else if (oper == ')')
-		while (1)
-		{
-			data = stack_pop(stack);
-			if (data == '(')
-				break;
-			*postfix++ = data;
-		}
-	else if(oper == '+' || oper == '-' || oper == '*' || oper == '/')
-	{
-		while (!stack_is_empty(stack) && comp_priority(stack_peek(stack), oper))  // stack is not empty, top of stack is bigger than oper(priority)
-			*postfix++ = stack_pop(stack);
-		stack_push(stack, oper);
-	}
-	return (postfix);  // new postfix adress return
-}
-
-char	*ft_strcpy(char *s1, char *s2)
-{
-	int i;
-	
-	i = -1;
-	while (s2[++i])
-		s1[i] = s2[i];
-	s1[i] = '\0';
-	return (s1);
-}
-
-void	infix_to_postfix(char *equ)
+char		*infix_to_postfix(char *exp)
 {
 	t_stack	stack;
-	char	*postfix;  // data to be converted
-	char	*remem_postfix;  // remember postfix adress
+	char	*postfix;
+	char	data;
+	int		post_i;
+	int		i;
+	
+	stack_init(&stack);  // stack reset
+	
+	postfix = (char *)malloc(ft_strlen(exp) + 1);
+	
+	post_i = -1;
+	i = -1;
+	while (++i < ft_strlen(exp))
+	{
+		if (ft_isdigit(exp[i]))
+			postfix[++post_i] = exp[i];
+			
+		else if (exp[i] == '(')
+			stack_push(&stack, exp[i]);
+		else if (exp[i] == ')')
+		{
+			while (1)
+			{
+				data = stack_pop(&stack);
+				if (data == '(')
+					break;
+				postfix[++post_i] = data;
+			}
+		}
+		
+		// if priority is loswer than stack head, take it out of stack
+		// after, put on stack  
+		else if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/')
+		{
+			while (!stack_is_empty(&stack) && priority_comp(stack.head->data, exp[i]) >= 0)
+				postfix[++post_i] = stack_pop(&stack);
+			stack_push(&stack, exp[i]);
+		}
+	}
+
+	while (!stack_is_empty(&stack))
+		postfix[++post_i] = stack_pop(&stack);
+	postfix[++post_i] = '\0';	
+
+	return (postfix);
+}
+
+int			postfix_cal(char *equ)
+{
+	t_stack	stack;
+	char	op1;
+	char	op2;
 	int		i;
 	
 	stack_init(&stack);
-	postfix = (char *)malloc(ft_strlen(equ) + 1);
-	postfix[ft_strlen(equ)] = '\0';
-	remem_postfix = postfix;  // remember postfix adress
 	
 	i = -1;
-	while (++i < ft_strlen(equ))  // repeat equ_len
+	while (++i < ft_strlen(equ))
 	{
 		if (ft_isdigit(equ[i]))
-			*postfix++ = equ[i];
-		else
-			postfix = operator_hand(&stack, postfix, equ[i]);
-	}
-	while (!stack_is_empty(&stack))  // until the stack is empty, repeat
-		*postfix++ = stack_pop(&stack);
-	*postfix = '\0';  // because of braces, the length of equ changes, so pull '\0' at the end 
-	ft_strcpy(equ, remem_postfix);
-	free(remem_postfix);
-}
-
-
-
-void	pop_cal_push(t_stack *stack, char oper)
-{
-	char	op1;  // operand1
-	char	op2;  // operand2
-	
-	op2 = stack_pop(stack);
-	op1 = stack_pop(stack);
-	if (oper == '+')
-		stack_push(stack, op1 + op2);
-	else if (oper == '-')
-		stack_push(stack, op1 - op2);
-	else if (oper == '*')
-		stack_push(stack, op1 * op2);
-	else if (oper == '/')
-		stack_push(stack, op1 / op2);
-}
-
-int		postfix_cal(char *equ)
-{
-	t_stack	stack;
-	int		i;
-	int 	result;
-	
-	stack_init(&stack);
-	i = -1;
-	while (++i < ft_strlen(equ))  // repeat equ_len
-	{
-		if(ft_isdigit(equ[i]))
 			stack_push(&stack, equ[i] - '0');  // data conversion for calculation
 		else
-			pop_cal_push(&stack, equ[i]);  // pop data, calculate, push data 
+		{
+			op2 = stack_pop(&stack);  // the first retrieved value is the second operand
+			op1 = stack_pop(&stack);
+			
+			if (equ[i] == '+')
+				stack_push(&stack, op1 + op2);
+			else if (equ[i] == '-')
+				stack_push(&stack, op1 - op2);
+			else if (equ[i] == '*')
+				stack_push(&stack, op1 * op2);
+			else if (equ[i] == '/')
+				stack_push(&stack, op1 / op2);		
+		}
 	}
-	result = stack_pop(&stack);
+
+	return (stack_pop(&stack));
+}
+
+int			infix_cal(char *exp)
+{
+	char	*postfix;
+	int		result;
+	
+	postfix = infix_to_postfix(exp);
+	result = postfix_cal(postfix);
+	
+	free(postfix);
 	return (result);
 }
 
-int		infix_cal(char *equ)
+
+
+int 		main(void)
 {
-	infix_to_postfix(equ);  // conversion infinx to postfix
-	return (postfix_cal(equ));  // return calculation result
-}
+	char exp1[] = "1+2*3";
+	char exp2[] = "(1+2)*3";
+	char exp3[] = "((1-2)+3)*(5-2)";
 
-
-
-// 246page. stack
-int		main(void)
-{
-	char equ1[] = "1+2*3";
-	char equ2[] = "(1+2)*3";
-	char equ3[] = "((1-2)+3)*(5-2)";
-	
-	printf("%s = %d\n", equ1, infix_cal(equ1));  // calculation result
-	printf("%s = %d\n", equ2, infix_cal(equ2));
-	printf("%s = %d\n", equ3, infix_cal(equ3));
+	printf("%s = %d \n", exp1, infix_cal(exp1));
+	printf("%s = %d \n", exp2, infix_cal(exp2));
+	printf("%s = %d \n", exp3, infix_cal(exp3));
 }

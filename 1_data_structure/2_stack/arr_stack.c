@@ -7,8 +7,8 @@ typedef	int	stack_data;
 
 typedef struct	s_stack
 {
-	stack_data	stack_arr[STACK_LEN];  // array type stack
-	int			top_idx;  // top index of stack
+	stack_data	stack_arr[STACK_LEN];
+	int			top_idx;
 }				t_stack;
 
 
@@ -32,15 +32,7 @@ int			stack_is_empty(t_stack *stack)
 
 stack_data	stack_pop(t_stack *stack)
 {
-	int		remem_idx;
-	
-	if (stack_is_empty(stack))  // if stack is empty
-	{
-		printf("stack is empty!\n");
-		exit (-1);
-	}
-	remem_idx = (stack->top_idx)--;
-	return (stack->stack_arr[remem_idx]);
+	return (stack->stack_arr[(stack->top_idx)--]);
 }
 
 
