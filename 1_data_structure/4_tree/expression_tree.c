@@ -1,34 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-
-typedef	void (*show_func)(int);  // function pointer
-
-
-
 typedef	char	bt_data;
 
 typedef	struct			s_bt_node
 {
 	bt_data				data;
-	struct s_bt_node	*left;  // left child node
-	struct s_bt_node	*right;  // right child node
+	struct s_bt_node	*left;
+	struct s_bt_node	*right;
 }						t_bt_node;
+
+typedef	void (*show_func)(int);  // function pointer
 
 
 
 typedef	t_bt_node	*stack_data;
 
-typedef struct	s_node
+typedef struct		s_node
 {
 	stack_data		data;
-	struct s_node	*next;  // next node address
+	struct s_node	*next;
 }					t_node;
 
 typedef struct	s_stack
 {
-	t_node		*head;  // head node of stack
+	t_node		*head;
 }				t_stack;
 
 
@@ -36,32 +32,6 @@ typedef struct	s_stack
 void		stack_init(t_stack *stack)
 {
 	stack->head = NULL;
-}
-
-int			stack_is_empty(t_stack *stack)
-{
-	if (stack->head)  // if stack is not empty
-		return (0);
-	return (1);
-}
-
-stack_data	stack_pop(t_stack *stack)
-{
-	t_node		*remem_node;
-	stack_data	remem_data;
-	
-	if (stack_is_empty(stack))  // if stack is empty
-	{
-		printf("stack is empty!\n");
-		exit (-1);
-	}
-	
-	remem_node = stack->head;  // remember node to be deleted
-	remem_data = stack->head->data;  // remember data to be deleted
-	
-	stack->head = stack->head->next;
-	free(remem_node);
-	return (remem_data);
 }
 
 void		stack_push(t_stack *stack, stack_data data)
@@ -75,6 +45,26 @@ void		stack_push(t_stack *stack, stack_data data)
 	stack->head = new_node;
 }
 
+int			stack_is_empty(t_stack *stack)
+{
+	if (stack->head)
+		return (0);
+	return (1);
+}
+
+stack_data	stack_pop(t_stack *stack)
+{
+	t_node		*remem_node;
+	stack_data	remem_data;
+	
+	remem_node = stack->head;  // remember node to be deleted
+	remem_data = stack->head->data;  // remember data to be deleted
+	
+	stack->head = stack->head->next;
+	free(remem_node);
+	return (remem_data);
+}
+
 
 
 t_bt_node	*make_bt_node(bt_data data)
@@ -83,27 +73,41 @@ t_bt_node	*make_bt_node(bt_data data)
 	
 	new_node = (t_bt_node *)malloc(sizeof(t_bt_node));
 	new_node->data = data;
+
 	new_node->left = NULL;
 	new_node->right = NULL;
+
 	return (new_node);
 }
 
-void		set_sub_tree(t_bt_node *parent, t_bt_node *left, t_bt_node *right)
+void		make_left_sub_free(t_bt_node *parent, t_bt_node *child)
 {
 	if (parent->left)
 		free(parent->left);
+	parent->left = child;
+}
+
+void		make_right_sub_free(t_bt_node *parent, t_bt_node *child)
+{
 	if (parent->right)
 		free(parent->right);
-	
-	parent->left = left;
-	parent->right = right;
+	parent->right = child;
+}
+
+
+
+void		show_data(int data)
+{
+	if (0 <= data && data <= 9)
+		printf("%d ", data);
+	else
+		printf("%c ", data);
 }
 
 void		preorder_traverse(t_bt_node *node, show_func f)
 {
 	if (!node)
 		return ;
-	
 	f(node->data);
 	preorder_traverse(node->left, f);
 	preorder_traverse(node->right, f);
@@ -113,7 +117,6 @@ void		inorder_traverse(t_bt_node *node, show_func f)
 {
 	if (!node)
 		return ;
-	
 	inorder_traverse(node->left, f);
 	f(node->data);
 	inorder_traverse(node->right, f);
@@ -123,31 +126,9 @@ void		postorder_traverse(t_bt_node *node, show_func f)
 {
 	if (!node)
 		return ;
-	
 	postorder_traverse(node->left, f);
 	postorder_traverse(node->right, f);
 	f(node->data);
-}
-
-t_bt_node	*get_left_sub_tree(t_bt_node *node)
-{
-	if (node)
-		return (node->left);
-	return (NULL);
-}
-
-t_bt_node	*get_right_sub_tree(t_bt_node *node)
-{
-	if (node)
-		return (node->right);
-	return (NULL);
-}
-
-bt_data		get_data(t_bt_node *node)
-{
-	if (node)
-		return (node->data);
-	return (0);
 }
 
 void		delete_tree(t_bt_node *node)
@@ -178,60 +159,52 @@ int			ft_isdigit(char n)
 	return (0);
 }
 
-t_bt_node	*make_e_tree(char *express)
+t_bt_node	*make_e_tree(char *exp)
 {
-	t_stack		stack;
 	t_bt_node	*node;
+	t_stack		stack;
 	int			i;
 	
 	stack_init(&stack);
 	
 	i = -1;
-	while (++i < ft_strlen(express))  // repeat by express size
+	while (++i < ft_strlen(exp))
 	{
-		if (ft_isdigit(express[i]))
-			node = make_bt_node(express[i] - '0');  // conversion for calculation
+		if (ft_isdigit(exp[i]))
+			node = make_bt_node(exp[i] - '0');  // conversion for calculation
 		else
 		{
-			node = make_bt_node(express[i]);
-			set_sub_tree(node, stack_pop(&stack), stack_pop(&stack));  // function call right -> left
+			node = make_bt_node(exp[i]);
+			make_right_sub_free(node, stack_pop(&stack));
+			make_left_sub_free(node, stack_pop(&stack));
 		}
 		stack_push(&stack, node);
 	}
 	
-	return (stack_pop(&stack));  // return root node
+	return (stack_pop(&stack));
 }
 
-void		show_data(int data)
+int			cal_tree(t_bt_node *e_tree)
 {
-	if (0 <= data && data <= 9)
-		printf("%d ", data);
-	else
-		printf("%c ", data);
-}
+	int op1;
+	int	op2;
 
-int			calculation_tree(t_bt_node *e_tree)
-{
-	char	oper;
-	int		op1;
-	int 	op2;
+	if (!e_tree->left && !e_tree->right)
+		return (e_tree->data);
+
+	op1 = cal_tree(e_tree->left);
+	op2 = cal_tree(e_tree->right);
 	
-	if (!get_left_sub_tree(e_tree) && !get_right_sub_tree(e_tree))  // if terminal node 
-		return (get_data(e_tree));
-	
-	op1 = calculation_tree(get_left_sub_tree(e_tree));  // left child node operand
-	op2 = calculation_tree(get_right_sub_tree(e_tree));  // right child node operand
-	oper = get_data(e_tree);  // current node operator
-	
-	if (oper == '+')
+	if (e_tree->data == '+')
 		return (op1 + op2);
-	else if (oper == '-')
+	else if (e_tree->data == '-')
 		return (op1 - op2);
-	else if (oper == '*')
-		return (op1 * op2);
-	else if (oper == '/')
+	else if (e_tree->data == '*')
+		return (op1 * op2);	
+	else if (e_tree->data == '/')
 		return (op1 / op2);
-	return (0);
+	else
+		return (0);
 }
 
 
@@ -239,19 +212,18 @@ int			calculation_tree(t_bt_node *e_tree)
 // 332page. tree
 int			main(void)
 {
-	char		express[] = "12+7*";
 	t_bt_node	*e_tree;
+	char		exp[] = "12+7*";
 	
-	e_tree = make_e_tree(express);  // make expression tree
+	e_tree = make_e_tree(exp);
 	
-	preorder_traverse(e_tree, show_data);  // tree traverse
+	preorder_traverse(e_tree, show_data);
 	printf("\n");
 	inorder_traverse(e_tree, show_data);
 	printf("\n");	
 	postorder_traverse(e_tree, show_data);
 	printf("\n");
-	
-	printf("result : %d\n", calculation_tree(e_tree));  // calculation result 
+	printf("result : %d\n", cal_tree(e_tree));
 	
 	delete_tree(e_tree);
 }

@@ -1,16 +1,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef	void (*show_func)(int);  // function pointer
+#define	NODE_MAX	6 
 
 typedef	int	bt_data;
 
 typedef	struct			s_bt_node
 {
 	bt_data				data;
-	struct s_bt_node	*left;  // left child node
-	struct s_bt_node	*right;  // right child node
+	struct s_bt_node	*left;
+	struct s_bt_node	*right;
 }						t_bt_node;
+
+typedef	void (*show_func)(int);  // function pointer
 
 
 
@@ -20,34 +22,32 @@ t_bt_node	*make_bt_node(bt_data data)
 	
 	new_node = (t_bt_node *)malloc(sizeof(t_bt_node));
 	new_node->data = data;
+
 	new_node->left = NULL;
 	new_node->right = NULL;
+
 	return (new_node);
 }
 
-void		set_sub_tree(t_bt_node *parent, t_bt_node *left, t_bt_node *right)
+void		make_left_sub_free(t_bt_node *parent, t_bt_node *child)
 {
 	if (parent->left)
 		free(parent->left);
+	parent->left = child;
+}
+
+void		make_right_sub_free(t_bt_node *parent, t_bt_node *child)
+{
 	if (parent->right)
 		free(parent->right);
-	parent->left = left;
-	parent->right = right;
+	parent->right = child;
 }
 
-t_bt_node	*get_left_sub_tree(t_bt_node *node)
-{
-	return (node->left);
-}
 
-t_bt_node	*get_right_sub_tree(t_bt_node *node)
-{
-	return (node->right);
-}
 
-bt_data		get_data(t_bt_node *node)
+void		show_data(int data)
 {
-	return (node->data);
+	printf("%d ", data);
 }
 
 void		preorder_traverse(t_bt_node *node, show_func f)
@@ -88,40 +88,30 @@ void		delete_tree(t_bt_node *node)
 
 
 
-void		show_data(int data)
-{
-	printf("%d ", data);
-}
-
-
-
 // 317page. tree
 int			main(void)
 {
-	t_bt_node	*node1;
-	t_bt_node	*node2;
-	t_bt_node	*node3;
-	t_bt_node	*node4;
-	t_bt_node	*node5;
-	t_bt_node	*node6;
+	t_bt_node	**node;
+	int			i;
+
+	node = (t_bt_node **)malloc(sizeof(t_bt_node *) * NODE_MAX);
+	i = -1;
+	while (++i < NODE_MAX)
+		node[i] = make_bt_node(i + 1);
 	
-	node1 = make_bt_node(1);  // make binary tree node
-	node2 = make_bt_node(2);
-	node3 = make_bt_node(3);
-	node4 = make_bt_node(4);
-	node5 = make_bt_node(5);
-	node6 = make_bt_node(6);
+	make_left_sub_free(node[0], node[1]);
+	make_right_sub_free(node[0], node[2]);
+	make_left_sub_free(node[1], node[3]);
+	make_right_sub_free(node[1], node[4]);
+	make_right_sub_free(node[2], node[5]);
 	
-	set_sub_tree(node1, node2, node3);  // setting sub tree
-	set_sub_tree(node2, node4, node5);
-	set_sub_tree(node3, NULL, node6);
-	
-	preorder_traverse(node1, show_data);  // tree traverse
+	preorder_traverse(node[0], show_data);
 	printf("\n");
-	inorder_traverse(node1, show_data);
+	inorder_traverse(node[0], show_data);
 	printf("\n");	
-	postorder_traverse(node1, show_data);
+	postorder_traverse(node[0], show_data);
 	printf("\n");
-	
-	delete_tree(node1);
+
+	delete_tree(node[0]);
+	free(node);
 }
