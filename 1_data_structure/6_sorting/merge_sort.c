@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void	arr_swap(int *a, int *b)
+void	show_arr(int *arr, int size)
 {
-	int	temp;
+	int i ;
 	
-	temp = *a;
-	*a = *b;
-	*b = temp;
+	i = -1;
+	while(++i < size)
+		printf("%d ", arr[i]);
+	printf("\n");
 }
 
 void	merge(int *arr, int left, int mid, int right)
@@ -17,30 +18,31 @@ void	merge(int *arr, int left, int mid, int right)
 	int		right_idx;
 	int		idx;
 	
-	left_idx = left;
-	right_idx = mid + 1;
+	left_idx = left - 1;
+	right_idx = mid;
 	idx = left;
 	merge_arr = (int *)malloc(sizeof(int) * (right + 1));  // the index of the array approaches until right + 1.
 	
 	// sort by priority
-	while (left_idx <= mid && right_idx <= right)
+	while (left_idx < mid && right_idx < right)
 	{
 		if (arr[left_idx] <= arr[right_idx])
-			merge_arr[idx++] = arr[left_idx++];
+			merge_arr[++idx] = arr[++left_idx];
 		else
-			merge_arr[idx++] = arr[right_idx++];
+			merge_arr[++idx] = arr[++right_idx];
 	}	
-	if (mid < left_idx)
-		while(right_idx <= right)
-			merge_arr[idx++] = arr[right_idx++];
+	if (mid == left_idx)
+		while(right_idx < right)
+			merge_arr[++idx] = arr[++right_idx];
 	else
-		while(left_idx <= mid)
-			merge_arr[idx++] = arr[left_idx++];
+		while(left_idx < mid)
+			merge_arr[++idx] = arr[++left_idx];
 
 	// move back to the original array
 	idx = left - 1;
 	while (++idx <= right)
 		arr[idx] = merge_arr[idx];
+
 	free(merge_arr);
 }
 
@@ -58,16 +60,6 @@ void	merge_sort(int *arr, int left, int right)
 
 		merge(arr, left, mid, right);  // Merge sorted two arrays
 	}
-}
-
-void	show_arr(int *arr, int size)
-{
-	int i ;
-	
-	i = -1;
-	while(++i < size)
-		printf("%d ", arr[i]);
-	printf("\n");
 }
 
 
