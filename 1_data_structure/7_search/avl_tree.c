@@ -25,20 +25,6 @@ t_bt_node	*make_bt_node(bt_data data)
 	return (new_node);
 }
 
-void		make_left_sub_free(t_bt_node *parent, t_bt_node *child)
-{
-	if (parent->left)
-		free(parent->left);
-	parent->left = child;
-}
-
-void		make_right_sub_free(t_bt_node *parent, t_bt_node *child)
-{
-	if (parent->right)
-		free(parent->right);
-	parent->right = child;
-}
-
 void		delete_tree(t_bt_node *node)
 {
 	if (!node)

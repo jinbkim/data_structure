@@ -19,13 +19,15 @@ typedef	struct			s_slot
 	enum slot_status	status;
 }						t_slot;
 
-typedef int	(*hash_func)(int);  // function pointer
+typedef int	(*hash_func)(int);
+
 
 typedef	struct	s_table
 {
 	t_slot		table[TABLE_MAX];
 	hash_func	f;
 }				t_table;
+
 
 
 
@@ -114,12 +116,10 @@ int		main(void)
 	t_info	*man;
 	
 	table_init(&table, my_hash_func);  // table reset
-	
+
 	man = make_man(201470610, "kim", "seoul");
-	table_insert(&table, man);  // insert data to table
-	man = make_man(201470611, "jin", "paris");
 	table_insert(&table, man);
-	man = make_man(201470612, "bum", "tokyo");
+	man = make_man(201470611, "jin", "paris");
 	table_insert(&table, man);
 	
 	man = table_search(&table, 201470610);
@@ -128,17 +128,12 @@ int		main(void)
 	man = table_search(&table, 201470611);
 	if (man)
 		show_man(man);
-	man = table_search(&table, 201470612);
-	if (man)
-		show_man(man);
 	
 	man = table_delete(&table, 201470610);
 	if (man)
 		free(man);
 	man = table_delete(&table, 201470611);
 	if (man)
-		free(man);
-	man = table_delete(&table, 201470612);
-	if (man)
-		free(man);
-} 
+		free(man);	
+	
+}
