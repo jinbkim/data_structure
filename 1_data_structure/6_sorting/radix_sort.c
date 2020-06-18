@@ -3,8 +3,6 @@
 
 #define BUCKET_LEN	10
 
-
-
 typedef	int	queue_data;
 
 typedef struct	s_node
@@ -24,14 +22,13 @@ typedef	struct	s_queue
 void	queue_init(t_queue *q)
 {
 	q->front = NULL;
-	q->rear = NULL;
 }
 
 int			queue_is_empty(t_queue *q)
 {
-	if (!q->front)
-		return (1);
-	return (0);
+	if (q->front)
+		return (0);
+	return (1);
 }
 
 void	enter_queue(t_queue *q, queue_data data)
@@ -40,18 +37,13 @@ void	enter_queue(t_queue *q, queue_data data)
 	
 	new_node = (t_node *)malloc(sizeof(t_node));
 	new_node->data = data;
-	new_node->next = NULL;
 	
-	if (queue_is_empty(q))
-	{
-		q->front = new_node;
-		q->rear = new_node;
-	}
-	else
-	{
+	new_node->next = NULL;
+	if (q->front)
 		q->rear->next = new_node;
-		q->rear = new_node;
-	}
+	else
+		q->front = new_node;
+	q->rear = new_node;
 }
 
 queue_data	delete_queue(t_queue *q)
@@ -59,44 +51,25 @@ queue_data	delete_queue(t_queue *q)
 	t_node		*remem_node;
 	queue_data	remem_data;
 	
-	if (queue_is_empty(q))
-	{
-		printf("queue is empty!\n");
-		exit (-1);
-	}
-	
 	remem_node = q->front;  // remember node to be deleted
-	remem_data = q->front->data;// remember data to be deleted
+	remem_data = q->front->data;  // remember data to be deleted
 	
-	q->front = q->front->next;
+	q->front = q->front->next;  // front reset
+
 	free(remem_node);
 	return (remem_data);
 }
 
 
 
-int		deci_len(int num)
+void	show_arr(int *arr, int size)
 {
-	int i;
-
-	i = 0;
-	while (++i && 10 <= num)
-		num /= 10;
-	return (i);  // return length of decimal number
-
-}
-
-int		arr_max_len(int *arr, unsigned int size)
-{
-	unsigned int	i;
-	int 			max_len;
+	int i ;
 	
-	max_len = deci_len(arr[0]);
-	i = 0;
-	while (++i < size)
-		if (max_len < deci_len(arr[i]))
-			max_len = deci_len(arr[i]);
-	return (max_len);  // return the length of the longest data
+	i = -1;
+	while(++i < size)
+		printf("%d ", arr[i]);
+	printf("\n");
 }
 
 int		ten_power(int n)
@@ -109,26 +82,6 @@ int		ten_power(int n)
 	return (result);  // return the power of 10
 }
 
-
-
-void	arr_swap(int *a, int *b)
-{
-	int	temp;
-	
-	temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
-void	ft_swap(int *a, int *b)
-{
-	int temp;
-
-	temp = *a;
-	*a = *b;
-	*b = temp;
-}
-
 void	radix_sort(int *arr, int size, int max_len)
 {
 	t_queue	bucket[BUCKET_LEN];
@@ -136,7 +89,7 @@ void	radix_sort(int *arr, int size, int max_len)
 	int		i;
 	int		j;
 	int		k;
-
+	
 	i = -1;
 	while (++i < BUCKET_LEN)
 		queue_init(&bucket[i]);
@@ -152,21 +105,11 @@ void	radix_sort(int *arr, int size, int max_len)
 		}
 		j = -1;
 		k = -1;
-		while (++j < BUCKET_LEN)  // repeat by size of bucket-
+		while (++j < BUCKET_LEN)  // repeat by size of bucket
 			while (!queue_is_empty(&bucket[j]))  // repeat until the bucket is empty
 				// save back to the array in the order they come out of the bucket
 				arr[++k] = delete_queue(&bucket[j]);
 	}
-}
-
-void	show_arr(int *arr, int size)
-{
-	int i ;
-	
-	i = -1;
-	while(++i < size)
-		printf("%d ", arr[i]);
-	printf("\n");
 }
 
 
@@ -174,11 +117,11 @@ void	show_arr(int *arr, int size)
 // 419page. sorting
 int		main(void)
 {
-	int 			arr[] = {321, 23, 212, 6};
-	unsigned int	size;
+	int	arr[] = {13, 212, 14, 7141, 10987, 6, 15};
+	int	size;
 	
 	size = sizeof(arr) / sizeof(int);
 	show_arr(arr, size);
-	radix_sort(arr, size, arr_max_len(arr, size));
+	radix_sort(arr, size, 5);  // 5 is digit of the largest number
 	show_arr(arr, size);
 } 
