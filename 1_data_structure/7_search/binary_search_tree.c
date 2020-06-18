@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define	NODE_MAX	9
-
 typedef	int	bt_data;
 
 typedef	struct			s_bt_node
@@ -50,15 +48,6 @@ void		show_data(int data)
 	printf("%d ", data);
 }
 
-void		preorder_traverse(t_bt_node *node, show_func f)
-{
-	if (!node)
-		return ;
-	f(node->data);
-	preorder_traverse(node->left, f);
-	preorder_traverse(node->right, f);
-}
-
 void		inorder_traverse(t_bt_node *node, show_func f)
 {
 	if (!node)
@@ -66,15 +55,6 @@ void		inorder_traverse(t_bt_node *node, show_func f)
 	inorder_traverse(node->left, f);
 	f(node->data);
 	inorder_traverse(node->right, f);
-}
-
-void		postorder_traverse(t_bt_node *node, show_func f)
-{
-	if (!node)
-		return ;
-	postorder_traverse(node->left, f);
-	postorder_traverse(node->right, f);
-	f(node->data);
 }
 
 void		delete_tree(t_bt_node *node)

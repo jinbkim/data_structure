@@ -6,8 +6,8 @@ typedef	int	bt_data;
 typedef	struct			s_bt_node
 {
 	bt_data				data;
-	struct s_bt_node	*left;  // left child node
-	struct s_bt_node	*right;  // right child node
+	struct s_bt_node	*left;
+	struct s_bt_node	*right;
 }						t_bt_node;
 
 
@@ -18,9 +18,25 @@ t_bt_node	*make_bt_node(bt_data data)
 	
 	new_node = (t_bt_node *)malloc(sizeof(t_bt_node));
 	new_node->data = data;
+
 	new_node->left = NULL;
 	new_node->right = NULL;
+
 	return (new_node);
+}
+
+void		make_left_sub_free(t_bt_node *parent, t_bt_node *child)
+{
+	if (parent->left)
+		free(parent->left);
+	parent->left = child;
+}
+
+void		make_right_sub_free(t_bt_node *parent, t_bt_node *child)
+{
+	if (parent->right)
+		free(parent->right);
+	parent->right = child;
 }
 
 void		delete_tree(t_bt_node *node)
@@ -33,6 +49,13 @@ void		delete_tree(t_bt_node *node)
 }
 
 
+
+
+
+void		bst_init(t_bt_node **root_node)
+{
+	*root_node = NULL;
+}
 
 int			get_height(t_bt_node *node)
 {
@@ -81,14 +104,14 @@ t_bt_node	*rotate_rr(t_bt_node *node)
 
 t_bt_node	*rotate_lr(t_bt_node *node)
 {
-	node->right = rotate_rr(node->right);
+	node->left = rotate_rr(node->left);
 	node = rotate_ll(node);
 	return (node);
 }
 
 t_bt_node	*rotate_rl(t_bt_node *node)
 {
-	node->left = rotate_ll(node->left);
+	node->right = rotate_ll(node->right);
 	node = rotate_rr(node);
 	return (node);
 }
@@ -106,19 +129,19 @@ t_bt_node	*rebalance(t_bt_node **root_node)
 	return (*root_node);
 }
 
-void		bst_insert(t_bt_node **root_node, bt_data data)
+void		bst_insert(t_bt_node **node, bt_data data)
 {
-	if (!*root_node)
-		*root_node = make_bt_node(data);
-	else if (data < (*root_node)->data)
+	if (!*node)
+		*node = make_bt_node(data);
+	else if (data < (*node)->data)
 	{
-		bst_insert(&((*root_node)->left), data);
-		*root_node = rebalance(root_node);
+		bst_insert(&((*node)->left), data);
+		*node = rebalance(node);
 	}
-	else if ((*root_node)->data < data)
+	else if ((*node)->data < data)
 	{
-		bst_insert(&((*root_node)->right), data);
-		*root_node = rebalance(root_node);
+		bst_insert(&((*node)->right), data);
+		*node = rebalance(node);
 	}
 }
 
@@ -127,28 +150,22 @@ void		bst_insert(t_bt_node **root_node, bt_data data)
 // 493page. search
 int			main(void)
 {
-	t_bt_node	*avl_root_node;
-	t_bt_node	*n;
-
-	avl_root_node = NULL;  // avl tree reset
+	t_bt_node	*root_node;
+	int			i;
 	
-	bst_insert(&avl_root_node, 1);  // insert data to binary search tree
-	bst_insert(&avl_root_node, 2);
-	bst_insert(&avl_root_node, 3);
-	bst_insert(&avl_root_node, 4);
-	bst_insert(&avl_root_node, 5);
-	bst_insert(&avl_root_node, 6);
-	bst_insert(&avl_root_node, 7);
+	bst_init(&root_node);  // binary search tree reset
 	
-	n = avl_root_node;
+	i = 0;
+	while (++i < 8)
+		bst_insert(&root_node, i);
 	
-	printf("1 : %d\n", n->data);
-	printf("2 : %d\n", n->left->data);
-	printf("3 : %d\n", n->right->data);
-	printf("4 : %d\n", n->left->left->data);
-	printf("5 : %d\n", n->left->right->data);
-	printf("6 : %d\n", n->right->left->data);
-	printf("7 : %d\n", n->right->right->data);
+	printf("1 : %d\n", root_node->data);
+	printf("2 : %d\n", root_node->left->data);
+	printf("3 : %d\n", root_node->right->data);
+	printf("4 : %d\n", root_node->left->left->data);
+	printf("5 : %d\n", root_node->left->right->data);
+	printf("6 : %d\n", root_node->right->left->data);
+	printf("7 : %d\n", root_node->right->right->data);
 	
-	delete_tree(avl_root_node);
+	delete_tree(root_node);
 }
