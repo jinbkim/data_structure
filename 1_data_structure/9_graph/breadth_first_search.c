@@ -1,25 +1,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define QUEUE_SIZE 100
-
 typedef	int	list_data;
 
 typedef struct		s_node
 {
 	list_data		data;
-	struct s_node	*next;  // address of next node
-	struct s_node	*before;  // address of before node
+	struct s_node	*before;
+	struct s_node	*next;
 }					t_node;
 
-typedef	int (*sort_func)(list_data, list_data);  // function pointer
+typedef int (*comp_func)(list_data, list_data);
 
-typedef	struct	s_list
+typedef struct		s_list
 {
-	t_node		*head;  // head node of list
-	t_node		*cur;	// current node of list
-	sort_func	f;
-}				t_list;
+	t_node			*head;
+	t_node			*cur;
+	comp_func		f;
+}					t_list;
 
 typedef	struct	s_al_graph
 {
@@ -29,16 +27,88 @@ typedef	struct	s_al_graph
 	t_list		*list;  // adjacent list
 }				t_al_graph;
 
+enum {A, B, C, D, E, F, G};
+
+#define QUEUE_SIZE 100
+
 typedef	int	queue_data;
 
 typedef	struct	s_queue
 {
-	int			front;  // front of queue
-	int			rear;  // rear of queue
+	int			front;
+	int			rear;
 	queue_data	q_arr[QUEUE_SIZE];
 }				t_queue;
 
-enum {A, B, C, D, E, F, G};
+
+
+int			func1(list_data d1, list_data d2)
+{
+	return (d2 - d1);
+}
+
+void		list_init(t_list *list, comp_func f)
+{
+	list->head = (t_node *)malloc(sizeof(t_node));  // make dummy node
+	list->head->next = NULL;
+	list->f = f;
+}
+
+void		list_insert_comp(t_list *list, list_data data)
+{	
+	t_node	*new_node;
+	t_node	*cur;
+	
+	new_node = (t_node *)malloc(sizeof(t_node));
+	new_node->data = data;
+	
+	// find position
+	cur = list->head;  // head : starting point
+	// repeat when priority of data is lower then next node
+	while (cur->next && list->f(data, cur->next->data) < 0)
+		cur = cur->next;
+
+	// connection
+	new_node->next = cur->next;
+	if (cur->next)  // if cur is not tail
+		cur->next->before = new_node;
+	new_node->before = cur;
+	cur->next = new_node;
+}
+
+int			list_next_node(t_list *list, list_data *data)
+{
+	if (list->cur->next == NULL)
+		return (0);
+	list->cur = list->cur->next;
+	*data = list->cur->data;
+	return (1);
+}
+
+
+
+void	queue_init(t_queue *q)
+{
+	q->front = -1;
+	q->rear = -1;
+}
+
+void	enter_queue(t_queue *q, queue_data data)
+{
+	q->q_arr[++(q->rear)] = data;
+}
+
+int			queue_is_empty(t_queue *q)
+{
+	if (q->front == q->rear)
+		return (1);
+	return (0);
+}
+
+queue_data	delete_queue(t_queue *q)
+{
+	return (q->q_arr[++(q->front)]);
+}
 
 
 
@@ -53,111 +123,6 @@ void		ft_memset(void *ptr, int value, size_t num)
 		arr[i] = value;
 }
 
-void		list_init(t_list *list, sort_func f)
-{
-	list->head = (t_node *)malloc(sizeof(t_node));  // make dummy node
-	list->head->next = NULL;
-	list->f = f;
-}
-
-int			left_data_is_big(int d1, int d2)
-{
-	if (d1 > d2)
-		return (1);
-	return (0);
-}
-
-void		list_insert(t_list *list, list_data data)
-{	
-	t_node	*new_node;
-	t_node	*cur;
-	
-	new_node = (t_node *)malloc(sizeof(t_node));
-	new_node->data = data;
-	
-	// find position of the new node
-	cur = list->head;  // head : starting point
-	while (cur->next && list->f(data, cur->next->data))
-		cur = cur->next;
-
-	// insert data after head node
-	new_node->next = cur->next;
-	if (cur->next)  // if node is exist
-		cur->next->before = new_node;
-	new_node->before = cur;
-	cur->next = new_node;
-}
-
-void	queue_init(t_queue *q)
-{
-	q->front = 0;
-	q->rear = 0;
-}
-
-int			list_next_node(t_list *list, list_data *data)
-{
-	if (!list->cur->next)  // if next node is not exist
-		return (0);
-	list->cur = list->cur->next;
-	*data = list->cur->data;
-	return (1);
-}
-
-int		queue_is_full(t_queue *q)
-{
-	if (q->rear == QUEUE_SIZE - 1)  // if queueu is full
-		return (1);
-	return (0);
-}
-
-void	enter_queue(t_queue *q, queue_data data)
-{
-	if (queue_is_full(q))
-	{
-		printf("queue is full!\n");
-		exit (-1);
-	}
-	q->q_arr[++(q->rear)] = data;
-}
-
-int			queue_is_empty(t_queue *q)
-{
-	if (q->front == q->rear)
-		return (1);
-	return (0);
-}
-
-queue_data	delete_queue(t_queue *q)
-{
-	if (queue_is_empty(q))
-	{
-		printf("queue is empty!\n");
-		exit (-1);
-	}
-	return (q->q_arr[++(q->front)]);
-}
-
-void		free_all(t_al_graph *graph)
-{
-	t_node	*cur;
-	int		i;
-	
-	i = -1;
-	while (++i < graph->vertex_num)
-	{
-		cur = graph->list[i].head;  // head : starting point
-		while (cur->next)
-		{
-			cur = cur->next;  // current node reset
-			free(cur->before);
-		}
-		free(cur);
-	}
-	free(graph->list);
-	free(graph->visit_info);
-}
-
-
 void		graph_init(t_al_graph *graph, int vertex_num)
 {
 	int	i;
@@ -170,43 +135,39 @@ void		graph_init(t_al_graph *graph, int vertex_num)
 	
 	i = -1;
 	while (++i < vertex_num)
-		list_init(&(graph->list[i]), left_data_is_big);  // list reset
+		list_init(&(graph->list[i]), func1);  // list reset
 }
 
 void		add_edge(t_al_graph *graph, int from, int to)
 {
-	list_insert(&(graph->list[from]), to);
-	list_insert(&(graph->list[to]), from);
+	list_insert_comp(&(graph->list[from]), to);
+	list_insert_comp(&(graph->list[to]), from);
 	(graph->edge_num)++;
 }
 
 void		show_graph(t_al_graph *graph)
 {
-	t_node	*cur;
+	int		data;
 	int		i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
 		printf("%c -> ", i + 'A');
-		cur = graph->list[i].head;  // head : starting point
-		while (cur->next)
-		{
-			cur = cur->next;  // current node reset
-			printf("%c", cur->data + 'A');
-			if (cur->next)
-				printf(", ");
-		}
+		
+		graph->list[i].cur = graph->list[i].head;  // head : starting point
+		while (list_next_node(&(graph->list[i]), &data))
+			printf("%c ", data + 'A');
 		printf("\n");
 	}
 }
 
-int			visit_vertex(t_al_graph *graph, int visit)
+int			visit_vertex(t_al_graph *graph, int vertex)
 {
-	if (!graph->visit_info[visit])
+	if (!graph->visit_info[vertex])
 	{
-		graph->visit_info[visit] = 1;
-		printf("%c ", visit + 'A');
+		graph->visit_info[vertex] = 1;
+		printf("%c ", vertex + 'A');
 		return (1);
 	}
 	return (0);
@@ -238,6 +199,23 @@ void		bfs_graph(t_al_graph *graph, int vertex)
 	printf("\n");
 }
 
+void		free_all(t_al_graph *graph)
+{
+	list_data	data;
+	int			i;
+	
+	i = -1;
+	while (++i < graph->vertex_num)
+	{
+		graph->list[i].cur = graph->list[i].head;  // head : starting point
+		while (list_next_node(&(graph->list[i]), &data))
+			free(graph->list[i].cur->before);
+		free(graph->list[i].cur);
+	}
+	free(graph->list);
+	free(graph->visit_info);
+}
+
 
 
 // 576page. graph
@@ -245,7 +223,7 @@ int			main(void)
 {
 	t_al_graph	graph;
 	
-	graph_init(&graph, 7);
+	graph_init(&graph, 7);  // adjacent list graph reset
 	
 	add_edge(&graph, A, B);  // connact vertex A and B
 	add_edge(&graph, A, D);

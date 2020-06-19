@@ -112,21 +112,18 @@ void	show_graph(t_al_graph *graph)
 	}
 }
 
-void	free_all(t_al_graph *graph)
+void		free_all(t_al_graph *graph)
 {
-	t_node	*cur;
-	int		i;
+	list_data	data;
+	int			i;
 	
 	i = -1;
 	while (++i < graph->vertex_num)
 	{
-		cur = graph->list[i].head;  // head : starting point
-		while (cur->next)
-		{
-			cur = cur->next;  // current node reset
-			free(cur->before);
-		}
-		free(cur);
+		graph->list[i].cur = graph->list[i].head;  // head : starting point
+		while (list_next_node(&(graph->list[i]), &data))
+			free(graph->list[i].cur->before);
+		free(graph->list[i].cur);
 	}
 	free(graph->list);
 }
