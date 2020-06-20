@@ -44,7 +44,7 @@
   delete []ptr : 앞서 할당한 int형 배열 소멸
 ### 1.7) c++에서 c언어의 표준함수 호출
 - c를 더하고.h빼기  
-  ex) <stdio.h> -> <cstdio>
+  ex) stdio.h -> cstdio
 
 ### 복습할것
 - 참조자 
