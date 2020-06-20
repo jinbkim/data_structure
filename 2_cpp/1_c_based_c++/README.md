@@ -20,4 +20,31 @@
   선언된 모든 것에 대해 namepace 생략 가능
 - ***using name std*** 대신에 일일이 using 선언을 하는것이 좋은습관임
 - ***namespace A = B::C::D*** 같이 namespace의 별칭 지정 가능
+### 1.4) const 사용법
+- const int A : A(int) 변경 불가
+- const int *A : *A(int) 변경 불가 
+- int *const A : A(int *) 변경불가
+- const int *const A : A(int *), *A(int) 변경불가 
+### 1.5) 자료형 bool
+- true와 false는 참과 거짓을 표현하기 위한 1 바이트 크기의 데이터 
+- 실제값은 각각 1과 0이 아님
+### 1.5) 참조자
+- 자신이 참조하는 변수를 대신할 수있는 또하나의 이름
+- 참조자는 변수에 대해서만 선언가능
+- 선언됨과 동시에 누군가를 참조해야함
+- A 함수는 반환형이 참조형, B 함수는 반환형이 기본자료형이라 정의
+- int &num2 = A(num1)***(O)***, int num2 = A(num1)***(O)***
+- int &num2 = B(num1)***(X)***, int num2 = B(num1)***(O)***
+- const int A = 10. const int &B = A. 
+- 위처럼 참조자가 상수도 참조 가능
+### 1.6) new, delete
+- new는 malloc 함수를 대신하는 키워드  
+  int *ptr = new int[3]; : 길이가 3인 int형 배열 할당  
+- delete는 free 함수를 대신하는 키워드  
+  delete []ptr : 앞서 할당한 int형 배열 소멸
+### 1.7) c++에서 c언어의 표준함수 호출
+- c를 더하고.h빼기  
+  ex) <stdio.h> -> <cstdio>
 
+### 복습할것
+- 참조자 
