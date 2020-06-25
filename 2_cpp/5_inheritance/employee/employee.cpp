@@ -1,6 +1,6 @@
 #include "employee.h"
 
-information::information(char *name, int pay)
+information::information(const char *name, int pay)
 {
 	strcpy(this->name, name);
 	this->pay = pay;
@@ -17,7 +17,7 @@ void	information::show() const
 employee::employee(void)
 	: man_num(0) {}
 
-void	employee::add_man(employee *man)
+void	employee::add_man(information *man)
 {
 	mans[man_num++] = man;
 }

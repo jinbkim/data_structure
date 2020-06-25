@@ -14,7 +14,7 @@ class	information
 	int		pay;
 
 public:
-	information(char *name, int pay);
+	information(const char *name, int pay);
 
 	void	show() const;
 };
@@ -27,7 +27,7 @@ class	employee
 public:
 	employee();
 
-	void	add_man(employee *man);
+	void	add_man(information *man);
 	void	show(void) const;
 
 	~employee(void);
