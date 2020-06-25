@@ -1,7 +1,8 @@
 {
     "files.associations": {
-        "iostream": "cpp",
-        "ostream": "cpp"
+		"iostream": "cpp",
+		"ostream": "cpp",
+		"cstring": "cpp"
 	},
     "editor.detectIndentation": false,
     "editor.insertSpaces": false

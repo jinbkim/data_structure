@@ -18,3 +18,5 @@
 #### const static
 - const 멤버변수의 초기화는 이니셜라이저를 통해야만 가능
 - const static 으로 선언되는 멤버변수는 선언과 동시에 초기화 가능
+#### mutable
+- mutable로 선언된 변수는 const 함수내에서의 값의 변경을 예외적으로 허용
