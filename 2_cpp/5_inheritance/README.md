@@ -6,14 +6,11 @@
 - 유도클래스의 객체 소멸과정에서 유도클래스의 소멸자가
   먼저 실행되고 기초클래스의 소멸자가 실행됨
 - 상속을하려면 기초클래스에 기본생성자가 있어야함
-### 5.2 세가지 형태의 상속
-#### protected
+### 5.2) protected
 - private와 마찬가지로 클래스 외부에서 접근 불가
 - protected로 선언된 변수는 public으로 상속하는 유도클래스에서 접근이 가능
-#### protected 상속
-- public을 protected로 바꿔서 상속
-#### private 상속
-- 모든 멤버가 접근 불가
-#### public 상속
-- private를 제외하고 그대로 상속
+#### 세가지 형태의 상속
+- protected 상속 :public을 protected로 바꿔서 상속
+- private 상속 : 모든 멤버가 접근 불가
+- public 상속 : private를 제외하고 그대로 상속
 ### 5.3)
