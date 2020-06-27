@@ -28,7 +28,7 @@ public:
 	~SoDerived()
 	{
 		cout<<"~SoDerived() : "<<derivNum<<endl;
-	}	
+	}
 };
 
 int main(void)

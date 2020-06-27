@@ -1,41 +1,44 @@
 #include "employee.h"
 
-information::information(const char *name, int pay)
+employee::employee(const char * name)
 {
 	strcpy(this->name, name);
-	this->pay = pay;
 }
 
-void	information::show() const
+void employee::show() const
 {
-	cout<<"name : "<<name<<endl;
-	cout<<"pay : "<<pay<<endl;
+	cout<<"name: "<<name<<endl;
+}
+
+
+emp_manage::emp_manage() : emp_num(0) {}
+
+void	emp_manage::add_emp(employee *emp)
+{
+	emp_list[emp_num++] = emp;
 }
 
 
 
-employee::employee(void)
-	: man_num(0) {}
+regular_work::regular_work(const char *name, int money)
+	: employee(name), money(money) {}
 
-void	employee::add_man(information *man)
+
+
+irregular_work::irregular_work(const char *name, int hour_pay)
+	: employee(name), hour_time(0), hour_pay(hour_pay) {}
+
+void	irregular_work::add_time(int hour_time)
 {
-	mans[man_num++] = man;
+	this->hour_time += hour_time;
 }
 
-void	employee::show(void) const
+
+
+sales_work::sales_work(const char *name, int money, double bonus_money)
+	: regular_work(name, money), sales(0), bonus_money(bonus_money) {}
+
+void	sales_work::add_sales(int sales)
 {
-	int i;
-
-	i = -1;
-	while (++i < man_num)
-		mans[i]->show();
-}
-
-employee::~employee(void)
-{
-	int i;
-
-	i = -1;
-	while(++i < man_num)
-		delete mans[i];
+	this->sales = sales;
 }

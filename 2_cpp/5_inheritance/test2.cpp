@@ -4,23 +4,54 @@
 using	std::cout;
 using	std::endl;
 
-class	s_class
+class	book
 {
-	int			num1;
-	mutable int	num2;
+	char	*title;
+	char	*num;
+	int		price;
 
 public:
-	s_class(int n1, int n2)
-		: num1(n1), num2(n2) {}
-
-	void	show()
+	book()
 	{
-		cout<<"<"<<num1<<", "<<num2<<">"<<endl;
+		title = NULL;
+		num = NULL;
+	}
+	book(const char *title, const char *num, int price)
+	{
+		this->title = new char[strlen(title) + 1];
+		strcpy(this->title, title);
+		this->num = new char[strlen(num) + 1];
+		strcpy(this->num, num);
+		this->price = price;
 	}
 
-	void	num1_to_num2() const
+	void	show_book()
 	{
-		num2 = num1;
+		cout<<"title : "<<title<<endl;
+		cout<<"book number : "<<num<<endl;
+		cout<<"price : "<<price<<endl;
+	}
+
+	~book()
+	{
+		delete []title;
+		delete []num;
+	}
+};
+
+class	ebook : public book
+{
+	book	b;
+	int		key;
+
+public:
+	ebook(const char *title, const char *num, int price, int key)
+		: b(title, num, price), key(key) {}
+
+	void	show(void)
+	{
+		b.show_book();
+		cout<<"key : "<<key<<endl;
 	}
 };
 
@@ -28,9 +59,10 @@ public:
 
 int		main(void)
 {
-	s_class	sc(1, 2);
+	book	b("c book", "b-200", 5000);
+	ebook	eb("c++ book", "a-100", 10000, 1);
 
-	sc.show();
-	sc.num1_to_num2();
-	sc.show();
+	b.show_book();
+	cout<<endl;
+	eb.show();
 }
