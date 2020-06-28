@@ -3,7 +3,11 @@
 		"iostream": "cpp",
 		"ostream": "cpp",
 		"cstring": "cpp",
-		"new": "cpp"
+		"new": "cpp",
+		"fstream": "cpp",
+		"istream": "cpp",
+		"system_error": "cpp",
+		"typeinfo": "cpp"
 	},
     "editor.detectIndentation": false,
     "editor.insertSpaces": false

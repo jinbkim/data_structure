@@ -66,7 +66,7 @@ class SalesWorker : public PermanentWorker
 {
 private:
 	int salesResult;    // 월 판매실적
-	double bonusRatio;    // 상여금 비율 
+	double bonusRatio;    // 상여금 비율
 public:
 	SalesWorker(char * name, int money, double ratio)
 		: PermanentWorker(name, money), salesResult(0), bonusRatio(ratio)
@@ -77,7 +77,7 @@ public:
 	}
 	int GetPay() const
 	{
-		return PermanentWorker::GetPay()  
+		return PermanentWorker::GetPay()
 					+ (int)(salesResult*bonusRatio);
 	}
 	void ShowSalaryInfo() const
@@ -93,7 +93,7 @@ private:
 	Employee* empList[50];
 	int empNum;
 public:
-	EmployeeHandler() : empNum(0) 
+	EmployeeHandler() : empNum(0)
 	{ }
 	void AddEmployee(Employee* emp)
 	{
@@ -101,18 +101,18 @@ public:
 	}
 	void ShowAllSalaryInfo() const
 	{
-		
+
 		for(int i=0; i<empNum; i++)
 			empList[i]->ShowSalaryInfo();
-		
+
 	}
 	void ShowTotalSalary() const
 	{
 		int sum=0;
-		
+
 		for(int i=0; i<empNum; i++)
 			sum+=empList[i]->GetPay();
-		
+
 		cout<<"salary sum: "<<sum<<endl;
 	}
 	~EmployeeHandler()
@@ -142,7 +142,7 @@ int main(void)
 	handler.AddEmployee(seller);
 
 	// 이번 달에 지불해야 할 급여의 정보
-	handler.ShowAllSalaryInfo();	
+	handler.ShowAllSalaryInfo();
 
 	// 이번 달에 지불해야 할 급여의 총합
 	handler.ShowTotalSalary();
