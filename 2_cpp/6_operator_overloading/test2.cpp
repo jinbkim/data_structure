@@ -2,36 +2,41 @@
 
 using	std::cout;
 using	std::endl;
-
-typedef	struct	s_data
+class	point
 {
-	int			data;
-	void	(*show_data)(struct s_data *);
-	void	(*add)(struct s_data *, int);
-}				t_data;
+	int	x;
+	int	y;
 
+public:
+	point(int x = 0, int y = 0) : x(x), y(y) {}
 
+	void	show() const
+	{
+		cout<<"<"<<x<<", "<<y<<">"<<endl;
+	}
+	point	operator*(int times)
+	{
+		point	p(x * times, y * times);
+		return (p);
+	}
+	friend point operator*(int times, point p);
+};
 
-void	show_data(t_data *THIS)
+point operator*(int times, point p)
 {
-	cout<<"data : "<<THIS->data<<endl;
-}
-
-void	add(t_data *THIS, int num)
-{
-	THIS->data += num;
+	return (p * times);
 }
 
 
 
 int main(void)
 {
-	t_data	obj1 = {15, show_data, add};
-	t_data	obj2 = {7, show_data, add};
+	point	p1(1, 2);
+	point	p2;
 
-	obj1.add(&obj1, 17);
-	obj2.add(&obj2, 9);
-	obj1.show_data(&obj1);
-	obj2.show_data(&obj2);
+	p2 = 3 * p1;
+	p2.show();
 
+	p2 = 2 * p1 * 3;
+	p2.show();
 }

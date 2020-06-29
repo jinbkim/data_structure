@@ -1,7 +1,7 @@
 #include <iostream>
 using namespace std;
 
-class Point 
+class Point
 {
 private:
 	int xpos, ypos;
@@ -10,9 +10,9 @@ public:
 	{  }
 	void ShowPosition() const
 	{
-		cout<<'['<<xpos<<", "<<ypos<<']'<<endl; 
+		cout<<'['<<xpos<<", "<<ypos<<']'<<endl;
 	}
-	Point operator*(int times) 
+	Point operator*(int times)
 	{
 		Point pos(xpos*times, ypos*times);
 		return pos;
