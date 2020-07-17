@@ -7,7 +7,8 @@
 		"fstream": "cpp",
 		"istream": "cpp",
 		"system_error": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"iosfwd": "cpp"
 	},
     "editor.detectIndentation": false,
     "editor.insertSpaces": false

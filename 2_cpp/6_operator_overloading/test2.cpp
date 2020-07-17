@@ -1,42 +1,66 @@
 #include <iostream>
+#include <cstring>
+using namespace std;
 
-using	std::cout;
-using	std::endl;
-class	point
+class Gun
 {
-	int	x;
-	int	y;
-
+private:
+	int bullet;    	// 장전된 총알의 수
 public:
-	point(int x = 0, int y = 0) : x(x), y(y) {}
-
-	void	show() const
+	Gun(int bnum) : bullet(bnum)
+	{ }
+	void Shut()
 	{
-		cout<<"<"<<x<<", "<<y<<">"<<endl;
+		cout<<"BBANG!"<<endl;
+		bullet--;
 	}
-	point	operator*(int times)
-	{
-		point	p(x * times, y * times);
-		return (p);
-	}
-	friend point operator*(int times, point p);
 };
 
-point operator*(int times, point p)
+class Police
 {
-	return (p * times);
-}
+private:
+	int handcuffs;    // 소유한 수갑의 수
+	Gun * pistol;     // 소유하고 있는 권총
+public:
+	Police(int bnum, int bcuff)
+		: handcuffs(bcuff)
+	{
+		if(bnum>0)
+			pistol=new Gun(bnum);
+		else
+			pistol=NULL;
+	}
+	void PutHandcuff()
+	{
+		cout<<"SNAP!"<<endl;
+		handcuffs--;
+	}
+	void Shut()
+	{
+		if(pistol==NULL)
+			cout<<"Hut BBANG!"<<endl;
+		else
+			pistol->Shut();
+	}
+	~Police()
+	{
+		if(pistol!=NULL)
+			delete pistol;
+	}
 
-
+	Police&	operator=(Police &p)
+	{
+		handcuffs = p.handcuffs;
+		pistol = new Gun(*(p.pistol));
+		return (*this);
+	}
+};
 
 int main(void)
 {
-	point	p1(1, 2);
-	point	p2;
+	Police p1(2, 3);
+	Police p2 = p1;
 
-	p2 = 3 * p1;
-	p2.show();
 
-	p2 = 2 * p1 * 3;
-	p2.show();
+	return 0;
 }
