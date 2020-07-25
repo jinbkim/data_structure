@@ -1,25 +1,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef	char	list_data;
+typedef	int	list_data;
 
-typedef struct		s_node
+typedef	struct		s_node
 {
 	list_data		data;
 	struct s_node	*next;
+	struct s_node	*before;
 }					t_node;
 
-typedef	struct	s_list
+typedef struct	s_list
 {
-	t_node		*head;
 	t_node		*tail;
-
 	t_node		*cur;
 }				t_list;
 
-void 		list_init(t_list *l)
+
+
+void		list_init(t_list *l)
 {
-	l->head = NULL;
+	l->tail = NULL;
 }
 
 void		list_insert_tail(t_list *l, list_data d)
@@ -29,67 +30,80 @@ void		list_insert_tail(t_list *l, list_data d)
 	node = (t_node *)malloc(sizeof(t_node));
 	node->data = d;
 
-	if (l->head)
+	if (l->tail)
+	{
+		node->next = l->tail->next;
+		node->before = l->tail;
+		l->tail->next->before = node;
 		l->tail->next = node;
+		l->tail = node;
+	}
 	else
-		l->head = node;
-	l->tail = node;
-	node->next = l->head;
+	{
+		node->next = node;
+		node->before = node;
+		l->tail = node;
+	}
+	
 }
 
-list_data	list_delete(t_list *l)
+list_data	list_remove(t_list *l)
 {
-	t_node		*re_node;
-	t_node		*befo;
-	list_data	re_data;
+	t_node		*del_n;
+	list_data	del_d;
 
-	re_node = l->cur;
-	re_data = l->cur->data;
-	l->befo->next = l->cur->next;
-	l->cur = l->befo;
-	befo = l->head;
-	while (befo->next != l->cur)
-		befo = befo->next;
-	l->befo = befo;
-	free(re_node);
-	return (re_data);
+	del_n = l->cur;
+	del_d = l->cur->data;
+
+	if (l->tail->next == l->tail)
+		l->tail = NULL;
+	else if (del_n == l->tail)
+	{
+		del_n->before->next = del_n->next;
+		del_n->next->before = del_n->before;
+		l->cur = l->cur->before;
+		l->tail = l->tail->before;
+	}
+	else
+	{
+		del_n->before->next = del_n->next;
+		del_n->next->before = del_n->before;
+		l->cur = l->cur->before;
+	}
+	free(del_n);
+	return (del_d);
 }
 
-void		josep(int n, int m)
+void		josep(int n, int k)
 {
 	t_list		list;
+	list_data	data;
 	int			i;
-	int			j;
 
 	list_init(&list);
-	i = -1;
-	while (++i < n)
-		list_insert_tail(&list, 'A' + i);
+	i = 0;
+	while (++i <= n)
+		list_insert_tail(&list, i);
 	list.cur = list.tail;
-	i = -1;
-	while (++i < n)
+	while (list.tail)
 	{
-		j = -1;
-		while (++j < m)
+		i = -1;
+		while (++i < k)
 			list.cur = list.cur->next;
-		printf("%c ", list_delete(&list));
+		data = list_remove(&list);
+		printf("%d ", data);
 	}
 	printf("\n");
 }
 
-int			main(void)
+
+
+int		main(void)
 {
 	int	n;
-	int	m;
+	int	k;
 
-	printf("----- Josephus problem -----\n");
-	printf("n , m : ");
-	scanf("%d %d", &n, &m);
+	scanf("%d %d", &n, &k);
 	getchar();
-	if (n <= 0 || m <= 0)
-	{
-		printf("wrong input!\n");
-		return (0);
-	}
-	josep(n, m);
+	josep(n, k);
 }
