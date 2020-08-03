@@ -13,74 +13,88 @@ typedef struct		s_node
 typedef struct		s_list
 {
 	t_node			*head;
-	t_node			*cur;
 	t_node			*tail;
+	t_node			*cur;
 }					t_list;
 
 
 
-void		list_init(t_list *list)
+void		list_init(t_list *l)
 {
-	list->head = (t_node *)malloc(sizeof(t_node));  // make dummy node
-	list->head->next = NULL;
-	list->tail = list->head;
+	l->head = (t_node *)malloc(sizeof(t_node));  // make head dummy node
+	l->tail = (t_node *)malloc(sizeof(t_node));  // make tail dummy node
+	l->head->next = l->tail;
+	l->head->before = l->head;
+	l->tail->next = l->tail;
+	l->tail->before = l->head;
 }
 
-void		list_insert_tail(t_list *list, list_data data)
-{	
-	t_node	*new_node;
-	
-	new_node = (t_node *)malloc(sizeof(t_node));
-	new_node->data = data;
-	
-	new_node->next = NULL;
-	new_node->before = list->tail;
-	list->tail->next = new_node;
-	list->tail = new_node;  // tail node reset
-}
-
-void		list_insert_head(t_list *list, list_data data)
-{	
-	t_node	*new_node;
-	
-	new_node = (t_node *)malloc(sizeof(t_node));
-	new_node->data = data;
-	
-	new_node->next = list->head->next;
-	new_node->before = list->head;
-	if (list->head->next)
-		list->head->next->before = new_node;
-	else  // there is no node
-		list->tail = new_node;
-	list->head->next = new_node;
-}
-
-int			list_next_node(t_list *list, list_data *data)
+void		list_insert_head(t_list *l, list_data d)
 {
-	if (list->cur->next == NULL)
-		return (0);
-	list->cur = list->cur->next;
-	*data = list->cur->data;
-	return (1);
+	t_node	*node;
+
+	node = (t_node *)malloc(sizeof(t_node));
+	node->data = d;
+
+	node->next = l->head->next;
+	node->before = l->head;
+	l->head->next->before = node;
+	l->head->next = node;
 }
 
-list_data	list_remove(t_list *list)
+void		list_insert_tail(t_list *l, list_data d)
 {
-	t_node		*remem_node;
-	list_data	remem_data;
+	t_node	*node;
 
-	remem_node = list->cur;  // remember node to be deleted
-	remem_data = list->cur->data;  // remember data to be deleted
-	
+	node = (t_node *)malloc(sizeof(t_node));
+	node->data = d;
+
+	node->next = l->tail;
+	node->before = l->tail->before;
+	l->tail->before->next = node;
+	l->tail->before = node;
+}
+
+void		print_list(t_list l)
+{
+	printf("----- list -----\n");
+	l.cur = l.head;
+	while(l.cur->next != l.tail)
+	{
+		l.cur = l.cur->next;
+		printf("%d ", l.cur->data);
+	}
+	printf("\n");
+}
+
+list_data	list_delete(t_list *l)
+{
+	t_node		*del_n;
+	list_data	del_d;
+
+	del_n = l->cur;  // remember node to be deleted
+	del_d = l->cur->data;  // remember data to be deleted
+
 	// connection before node and next node
-	list->cur->before->next = list->cur->next;
-	if (list->cur->next)  // if current node is not tail
-		list->cur->next->before = list->cur->before;
-
-	list->cur = list->cur->before;  // current node reset
+	l->cur->before->next = l->cur->next;
+	l->cur->next->before = l->cur->before;
+	if (l->cur->before != l->head)
+		l->cur = l->cur->before;  // current node reset
 	
-	free(remem_node);
-	return (remem_data);
+	free(del_n);
+	return (del_d);
+}
+
+void		free_all(t_list *l)
+{
+	l->cur = l->head;
+	
+	while (l->cur != l->tail)
+	{
+		l->cur = l->cur->next;
+		free(l->cur->before);
+	}
+	free(l->tail);
 }
 
 
@@ -89,40 +103,29 @@ list_data	list_remove(t_list *list)
 int			main(void)
 {
 	t_list	list;
-	int		data;
 	int		i;
-	
+
 	list_init(&list);  // list reset
-	
+
 	i = 0;
 	while (++i < 6)
-		list_insert_head(&list, i);  // insert data to tail
-	i = 0;
-	while (++i < 6)
-		list_insert_tail(&list, i);
-	
-	// show all data
-	list.cur = list.head;  /// head : starting point
-	while (list_next_node(&list, &data))
-		printf("%d ", data);
-	printf("\n");
-		
+		list_insert_head(&list, i);  // insert data to head
+	print_list(list);
+
+	i = 10;
+	while (++i < 16)
+		list_insert_tail(&list, i);  // insert data to tail
+	print_list(list);
+
 	printf("----- even number data delete -----\n");
-	list.cur = list.head;
-	while (list_next_node(&list, &data))
-		if (data % 2 == 0)
-			list_remove(&list);
-	
-	// show all data
-	list.cur = list.head;  /// head : starting point
-	while (list_next_node(&list, &data))
-		printf("%d ", data);
-	printf("\n");
-		
-	// delete all data	
-	list.cur = list.head;
-	while (list_next_node(&list, &data))
-		list_remove(&list);	
-		
-	free(list.head);
+	list.cur = list.head;  // head : starting point
+	while (list.cur->next != list.tail)
+	{
+		list.cur = list.cur->next;
+		if (list.cur->data % 2 == 0)
+			list_delete(&list);
+	}
+	print_list(list);
+
+	free_all(&list);
 }

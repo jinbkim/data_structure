@@ -7,7 +7,6 @@ typedef	struct		s_node
 {
 	list_data		data;
 	struct s_node	*next;
-	struct s_node	*before;
 }					t_node;
 
 typedef struct	s_list
@@ -33,43 +32,39 @@ void		list_insert_tail(t_list *l, list_data d)
 	if (l->tail)
 	{
 		node->next = l->tail->next;
-		node->before = l->tail;
-		l->tail->next->before = node;
 		l->tail->next = node;
 		l->tail = node;
 	}
 	else
 	{
 		node->next = node;
-		node->before = node;
 		l->tail = node;
 	}
-	
 }
 
 list_data	list_remove(t_list *l)
 {
 	t_node		*del_n;
+	t_node		*before;
 	list_data	del_d;
 
 	del_n = l->cur;
 	del_d = l->cur->data;
 
+	before = l->tail;
+	while (before->next != del_n)
+		before = before->next;
+
 	if (l->tail->next == l->tail)
 		l->tail = NULL;
-	else if (del_n == l->tail)
-	{
-		del_n->before->next = del_n->next;
-		del_n->next->before = del_n->before;
-		l->cur = l->cur->before;
-		l->tail = l->tail->before;
-	}
 	else
 	{
-		del_n->before->next = del_n->next;
-		del_n->next->before = del_n->before;
-		l->cur = l->cur->before;
+		before->next = l->cur->next;
+		l->cur = before;
 	}
+	if (del_n == l->tail)
+		l->tail = before;
+	
 	free(del_n);
 	return (del_d);
 }
@@ -81,9 +76,11 @@ void		josep(int n, int k)
 	int			i;
 
 	list_init(&list);
+
 	i = 0;
 	while (++i <= n)
 		list_insert_tail(&list, i);
+
 	list.cur = list.tail;
 	while (list.tail)
 	{
@@ -96,9 +93,7 @@ void		josep(int n, int k)
 	printf("\n");
 }
 
-
-
-int		main(void)
+int			main(void)
 {
 	int	n;
 	int	k;
