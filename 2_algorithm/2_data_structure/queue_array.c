@@ -16,14 +16,15 @@ typedef	struct	s_queue
 
 void		queue_init(t_queue *q)
 {
+	printf("\n----- queue init -----\n");
 	q->front = -1;
 	q->rear = -1;
 }
 
 void		queue_put(t_queue *q, queue_data d)
 {
-	if ((q->rear + 1) % QUEUE_SIZE == q->front)
-		printf("queue overflow!\n\n");
+	if (q->front + QUEUE_SIZE == q->rear)
+		printf("queue overflow!\n");
 	else
 		q->q_arr[++(q->rear) % QUEUE_SIZE] = d;
 }
@@ -33,13 +34,9 @@ void		queue_print(t_queue q)
 	int i;
 
 	i = q.front;
-	printf("----- front -> rear -----\n");
-	while (i != q.rear)
-	{
-		printf("%d\n", q.q_arr[i]);
-		i = (i + 1) % QUEUE_SIZE;
-	}
-	printf("%d\n", q.q_arr[i]);
+	printf("\n----- queue front -> rear -----\n");
+	while (++i <= q.rear)
+		printf("%d\n", q.q_arr[i % QUEUE_SIZE]);
 }
 
 int			queue_is_empty(t_queue *q)
@@ -51,7 +48,13 @@ int			queue_is_empty(t_queue *q)
 
 queue_data	queue_get(t_queue *q)
 {
-	return (q->q_arr[++(q->front)]);
+	if (q->front == q->rear)
+	{
+		printf("queue underflow!\n");
+		return (-1);
+	}
+	else
+		return (q->q_arr[++(q->front) % QUEUE_SIZE]);
 }
 
 
@@ -64,11 +67,19 @@ int			main(void)
 	queue_init(&q);
 
 	i = 0;
-	while (++i < 6)
+	while (++i <= QUEUE_SIZE + 1)
 		queue_put(&q, i);
 	queue_print(q);
 
-	while (!queue_is_empty(&q))
-		printf("%d ", queue_get(&q));
-	printf("\n");
+	queue_init(&q);
+
+	i = -1; 
+	while (++i < 3)
+		queue_put(&q, i);
+	queue_print(q);
+
+	i = -1;
+	while (++i <= 4)
+		printf("get : %d\n", queue_get(&q));
+	queue_print(q);
 }
