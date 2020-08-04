@@ -12,44 +12,83 @@ typedef struct		s_node
 typedef struct	s_stack
 {
 	t_node		*head;
+	t_node		*tail;
 }				t_stack;
 
 
 
-void		stack_init(t_stack *stack)
+void		stack_init(t_stack *s)
 {
-	stack->head = NULL;
+	s->head = (t_node *)malloc(sizeof(t_node));
+	s->tail = (t_node *)malloc(sizeof(t_node));
+	s->head->next = s->tail;
+	s->tail->next = s->tail;
 }
 
-void		stack_push(t_stack *stack, stack_data data)
+void		stack_push(t_stack *s, stack_data d)
 {
-	t_node	*new_node;
+	t_node	*node;
 	
-	new_node = (t_node *)malloc(sizeof(t_node));
-	new_node->data = data;
-	
-	new_node->next = stack->head;
-	stack->head = new_node;
+	node = (t_node *)malloc(sizeof(t_node));
+	node->data = d;
+
+	node->next = s->head->next;
+	s->head->next = node;
 }
 
-int			stack_is_empty(t_stack *stack)
+void		print_stack(t_stack s)
 {
-	if (stack->head)
-		return (0);
-	return (1);
+	t_node	*cur;
+
+	printf("----- stack -----\n");
+	if (s.head->next == s.tail)
+	{
+		printf("empty!\n");
+		return ;
+	}
+	cur = s.head->next;
+	while (cur != s.tail)
+	{
+		printf("%d ", cur->data);
+		cur = cur->next;
+	}
+	printf("\n\n");
 }
 
-stack_data	stack_pop(t_stack *stack)
+int			stack_is_empty(t_stack *s)
 {
-	t_node		*remem_node;
-	stack_data	remem_data;
+	if (s->head->next == s->tail)
+		return (1);
+	return (0);
+}
+
+stack_data	stack_pop(t_stack *s)
+{
+	t_node		*del_n;
+	stack_data	del_d;
 	
-	remem_node = stack->head;  // remember node to be deleted
-	remem_data = stack->head->data;  // remember data to be deleted
+	del_n = s->head->next;  // remember node to be deleted
+	del_d = s->head->next->data;  // remember data to be deleted
 	
-	stack->head = stack->head->next;
-	free(remem_node);
-	return (remem_data);
+	s->head->next = del_n->next;
+	free(del_n);
+	return (del_d);
+}
+
+void		free_all(t_stack *s)
+{
+	t_node	*before;
+	t_node	*cur;
+
+	before = s->head;
+	cur = s->head->next;
+	while (cur != s->tail)
+	{
+		free(before);
+		before = cur;
+		cur = cur->next;
+	}
+	free(s->tail);
 }
 
 
@@ -57,16 +96,19 @@ stack_data	stack_pop(t_stack *stack)
 // 217page. stack
 int			main(void)
 {
-	t_stack	stack;
+	t_stack	s;
 	int		i;
 	
-	stack_init(&stack);  // stack reset
-	
+	stack_init(&s);  // stack reset
+
 	i = 0;
-	while (++i < 5)
-		stack_push(&stack, i);  // push data to stack
-	
-	while (!stack_is_empty(&stack))
-		printf("%d ", stack_pop(&stack));  // pop data from stack
-	printf("\n");
+	while (++i < 6)
+		stack_push(&s, i);  // push data to stack
+	print_stack(s);
+
+	while (!stack_is_empty(&s))
+		printf("pop : %d\n", stack_pop(&s));  // pop data from stack
+	print_stack(s);
+
+	free_all(&s);
 }
