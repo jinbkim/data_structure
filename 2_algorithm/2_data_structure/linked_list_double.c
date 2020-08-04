@@ -55,7 +55,7 @@ void		list_insert_tail(t_list *l, list_data d)
 	l->tail->before = node;
 }
 
-void		print_list(t_list l)
+void		list_print(t_list l)
 {
 	printf("----- list -----\n");
 	l.cur = l.head;
@@ -107,12 +107,12 @@ int			main(void)
 	i = 0;
 	while (++i < 6)
 		list_insert_head(&list, i);
-	print_list(list);
+	list_print(list);
 
 	i = 10;
 	while (++i < 16)
 		list_insert_tail(&list, i);
-	print_list(list);
+	list_print(list);
 
 	printf("----- even number data delete -----\n");
 	list.cur = list.head;
@@ -122,7 +122,7 @@ int			main(void)
 		if (list.cur->data % 2 == 0)
 			list_delete(&list);
 	}
-	print_list(list);
+	list_print(list);
 
 	free_all(&list);
 }

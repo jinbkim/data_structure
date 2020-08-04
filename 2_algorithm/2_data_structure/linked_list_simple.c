@@ -53,7 +53,7 @@ int			comp_func(list_data d1, list_data d2)
 	return (d1 - d2);
 }
 
-void		print_list(t_list l)
+void		list_print(t_list l)
 {
 	l.cur = l.head;
 
@@ -110,7 +110,7 @@ int			main(void)
 	i = 10;
 	while (--i)
 		list_insert_order(&list, i, comp_func);
-	print_list(list);
+	list_print(list);
 
 	printf("----- 3 delete -----\n");
 	list.cur = list.head;
@@ -120,7 +120,7 @@ int			main(void)
 		list.cur = list.cur->next;
 	}
 	list_delete(&list);
-	print_list(list);
+	list_print(list);
 
 	free_all(&list);
 }

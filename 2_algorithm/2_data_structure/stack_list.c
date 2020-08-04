@@ -19,6 +19,7 @@ typedef struct	s_stack
 
 void		stack_init(t_stack *s)
 {
+	printf("\n----- stack init -----\n");
 	s->head = (t_node *)malloc(sizeof(t_node));
 	s->tail = (t_node *)malloc(sizeof(t_node));
 	s->head->next = s->tail;
@@ -36,11 +37,11 @@ void		stack_push(t_stack *s, stack_data d)
 	s->head->next = node;
 }
 
-void		print_stack(t_stack s)
+void		stack_print(t_stack s)
 {
 	t_node	*cur;
 
-	printf("----- stack -----\n");
+	printf("\n----- stack -----\n");
 	if (s.head->next == s.tail)
 	{
 		printf("empty!\n");
@@ -66,6 +67,12 @@ stack_data	stack_pop(t_stack *s)
 {
 	t_node		*del_n;
 	stack_data	del_d;
+
+	if (s->head->next == s->tail)
+	{
+		printf("stack underflow!\n");
+		return (-1);
+	}
 	
 	del_n = s->head->next;
 	del_d = s->head->next->data;
@@ -91,6 +98,12 @@ void		free_all(t_stack *s)
 	free(s->tail);
 }
 
+void		clear_stack(t_stack *s)
+{
+	free_all(s);
+	stack_init(s);
+}
+
 
 
 int			main(void)
@@ -103,11 +116,14 @@ int			main(void)
 	i = 0;
 	while (++i < 6)
 		stack_push(&s, i);
-	print_stack(s);
+	stack_print(s);
 
-	while (!stack_is_empty(&s))
-		printf("pop : %d\n", stack_pop(&s));
-	print_stack(s);
+	printf("pop : %d\n", stack_pop(&s));
+	printf("pop : %d\n", stack_pop(&s));
+	stack_print(s);
+
+	clear_stack(&s);
+	stack_print(s);
 
 	free_all(&s);
 }
