@@ -146,9 +146,9 @@ int		cal_tree(t_bt_node *node, t_list l)
 	int	op2;
 
 	if (node->left == l.tail && node->right == l.tail)
-		return (node->data);
-	op1 = cal_tree(node->left, l) - '0';
-	op2 = cal_tree(node->right, l) - '0';
+		return (node->data - '0');
+	op1 = cal_tree(node->left, l);
+	op2 = cal_tree(node->right, l);
 	printf("op1 : %d, op2 : %d\n", op1, op2);
 	printf("data : %c\n", node->data);
 	if (node->data == '+')
@@ -164,10 +164,11 @@ int		cal_tree(t_bt_node *node, t_list l)
 }
 
 
+
 int		main(void)
 {
-	char		exp[] = "12+43-5*";
-	t_list		l;
+	char	exp[] = "12+34-*5/67*+";
+	t_list	l;
 
 	tree_init(&l);
 
@@ -182,4 +183,3 @@ int		main(void)
 
 	printf("result : %d\n", cal_tree(l.head->left, l));
 }
-
