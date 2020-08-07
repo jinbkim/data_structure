@@ -29,7 +29,7 @@ void		stack_init(t_stack *s)
 void		stack_push(t_stack *s, stack_data d)
 {
 	t_node	*node;
-	
+
 	node = (t_node *)malloc(sizeof(t_node));
 	node->data = d;
 
@@ -73,10 +73,10 @@ stack_data	stack_pop(t_stack *s)
 		printf("stack underflow!\n");
 		return (-1);
 	}
-	
+
 	del_n = s->head->next;
 	del_d = s->head->next->data;
-	
+
 	s->head->next = del_n->next;
 	free(del_n);
 	return (del_d);
@@ -89,7 +89,7 @@ void		free_all(t_stack *s)
 
 	before = s->head;
 	cur = s->head->next;
-	while (cur != s->tail)
+	while (before != s->tail)
 	{
 		free(before);
 		before = cur;
@@ -110,7 +110,7 @@ int			main(void)
 {
 	t_stack	s;
 	int		i;
-	
+
 	stack_init(&s);
 
 	i = 0;
@@ -118,7 +118,6 @@ int			main(void)
 		stack_push(&s, i);
 	stack_print(s);
 
-	printf("pop : %d\n", stack_pop(&s));
 	printf("pop : %d\n", stack_pop(&s));
 	stack_print(s);
 

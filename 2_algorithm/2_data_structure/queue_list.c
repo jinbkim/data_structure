@@ -59,11 +59,11 @@ void		free_all(t_queue *q)
 {
 	t_node	*cur;
 
-	cur = q->front->next;
+	cur = q->front;
 	while (cur != q->rear)
 	{
-		free(cur->before);
 		cur = cur->next;
+		free(cur->before);
 	}
 	free(q->rear);
 }
@@ -89,7 +89,7 @@ queue_data	queue_get(t_queue *q)
 	del_d = q->front->next->data;
 
 	q->front->next = del_n->next;
-	del_n->before = q->front;
+	del_n->next->before = q->front;
 	free(del_n);
 	return (del_d);
 }
@@ -102,7 +102,7 @@ int		main(void)
 	int		i;
 
 	queue_init(&q);
-	
+
 	i = 0;
 	while (++i < 4)
 		queue_put(&q, i);
@@ -115,9 +115,7 @@ int		main(void)
 		queue_put(&q, i);
 	queue_print(q);
 
-	i = -1;
-	while (++i < 4)
-		printf("get : %d\n", queue_get(&q));
+	printf("get : %d\n", queue_get(&q));
 	queue_print(q);
 
 	free_all(&q);
