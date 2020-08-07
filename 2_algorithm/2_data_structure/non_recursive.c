@@ -67,6 +67,13 @@ void		stack_push(t_stack *s, stack_data d)
 		s->stack_arr[++(s->top_i)] = d;
 }
 
+int			stack_is_empty(t_stack s)
+{
+	if (s.top_i >= 0)
+		return (0);
+	return (1);
+}
+
 
 
 void		tree_init(t_list *l)
@@ -109,32 +116,79 @@ t_bt_node	*make_e_tree(char *exp, t_list *l)
 
 void	preorder_traverse(t_bt_node *node, t_list *l)
 {
-	if (node != l->tail)
+	t_stack		s;
+	stack_data	d;
+
+	stack_init(&s);
+	stack_push(&s, node);
+	while (!stack_is_empty(s))
 	{
-		printf("%c ",node->data);
-		preorder_traverse(node->left, l);
-		preorder_traverse(node->right, l);
+		d = stack_pop(&s);
+		if (d != l->tail)
+		{
+			printf("%c ",d->data);
+			stack_push(&s, d->right);
+			stack_push(&s, d->left);
+		}
 	}
 }
 
 void	inorder_traverse(t_bt_node *node, t_list *l)
 {
-	if (node != l->tail)
+	t_stack	s;
+
+	stack_init(&s);
+	while (1)
 	{
-		inorder_traverse(node->left, l);
-		printf("%c ",node->data);
-		inorder_traverse(node->right, l);
+		while (node != l->tail)
+		{
+			stack_push(&s, node);
+			node = node->left;
+		}
+		if (stack_is_empty(s))
+			break ;
+		else
+		{
+			node = stack_pop(&s);
+			printf("%c ",node->data);
+			node = node->right;
+		}
 	}
 }
 
 void	postorder_traverse(t_bt_node *node, t_list *l)
 {
-	if (node != l->tail)
-	{
-		postorder_traverse(node->left, l);
-		postorder_traverse(node->right, l);
-		printf("%c ",node->data);
+	t_bt_node	*before;
+	t_stack		s;
 
+	stack_init(&s);
+	while (1)
+	{
+		while (node != l->tail)
+		{
+			stack_push(&s, node);
+			node = node->left;
+		}
+		while (!stack_is_empty(s))
+		{
+			before = node;
+			node = stack_pop(&s);
+			if (node->right == l->tail)
+				printf("%c ",node->data);
+			else
+			{
+				if (node->right == before)
+					printf("%c ",node->data);
+				else
+				{
+					stack_push(&s, node);
+					node = node->right;
+					break ;
+				}
+			}
+		}
+		if (stack_is_empty(s))
+			break ;
 	}
 }
 
