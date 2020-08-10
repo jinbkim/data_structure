@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 void	show_arr(int *arr, int size)
 {

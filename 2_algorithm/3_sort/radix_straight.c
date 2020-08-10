@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #define	BIT_SIZE	2
 #define	BB_SIZE		(1 << BIT_SIZE)
