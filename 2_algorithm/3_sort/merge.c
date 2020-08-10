@@ -13,9 +13,9 @@ void	show_arr(int *arr, int size)
 
 void	merge_sort(int *arr, int n)
 {
-	int	bucket[n];
-	int	first;
-	int	second;
+	int	bucket[n + 1];
+	int	left;
+	int	right;
 	int	size;
 	int	i;
 	int	j;
@@ -24,36 +24,33 @@ void	merge_sort(int *arr, int n)
 	size = 1;
 	while (size < n)
 	{
-		first = -2 * size;
-		second = first + size;
-		while (second + size * 2 < n)
+		left = -2 * size;
+		right = left + size;
+		while (right + size <= n)
 		{
-			first = second + size;
-			second = first + size;
-			i = first;
-			j = second;
-			k = first;
-			printf("size : %d, first : %d, second : %d, i : %d, j : %d, k : %d\n", size, first, second, i, j, k);
-			while (i < first + size || (j < second + size && j < n))
+			left = right + size;
+			right = left + size;
+			i = left - 1;
+			j = right - 1;
+			k = left - 1;
+			while (++k < n)
 			{
-				printf("k : %d\n", k);
-				if (arr[i] <= arr[j])
+				if (arr[i + 1] <= arr[j + 1])
 				{
-					if (i < first + size)
-						bucket[k++] = arr[i++];
+					if (i + 1 < right)
+						bucket[k] = arr[++i];
 					else
-						bucket[k++] = arr[j++];
+						bucket[k] = arr[++j];
 				}
 				else
 				{
-					if ((j < second + size) && j < n)
-						bucket[k++] = arr[j++];
+					if ((j + 1 < right + size) && (j + 1 < n))
+						bucket[k] = arr[++j];
 					else
-						bucket[k++] = arr[i++];
+						bucket[k] = arr[++i];
 				}
 			}
 		}
-		show_arr(bucket, 7);
 		i = -1;
 		while (++i < n)
 			arr[i] = bucket[i];
@@ -62,11 +59,12 @@ void	merge_sort(int *arr, int n)
 }
 
 
+
 int		main(void)
 {
-	int arr[] = {6, 3, 1, 7, 4, 2, 5};
+	int arr[8] = {6, 2, 4, 7, 1, 5, 3};
 
-	show_arr(arr, sizeof(arr) / sizeof(int));
-	merge_sort(arr, sizeof(arr) / sizeof(int));
-	show_arr(arr, sizeof(arr) / sizeof(int));
+	show_arr(arr, sizeof(arr) / sizeof(int) - 1);
+	merge_sort(arr, sizeof(arr) / sizeof(int) - 1);
+	show_arr(arr, sizeof(arr) / sizeof(int) - 1);
 } 
