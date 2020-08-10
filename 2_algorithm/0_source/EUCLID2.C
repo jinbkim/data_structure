@@ -5,8 +5,9 @@
 /*                                                           */
 
 #include <stdio.h>
-#include <dos.h>
-#include "timer.h"
+// #include <dos.h>
+// #include "timer.h"
+#include <time.h>
 
 /* function for getting gcd by minus method */
 
@@ -52,7 +53,7 @@ int gcd_recursion(int u, int v)
 
 #define LOOP 10000
 
-void main(void)
+int main(void)
     {
     int u, v, gcd;
     long t1, t2;
@@ -70,26 +71,26 @@ void main(void)
         if (u == 0  ||  v == 0)   /* Termination code */
             break;
 
-        t1 = get_tick();
+        t1 = clock();;
         for (i = 0; i < LOOP; i++)
 	    gcd = gcd_minus(u, v);
-	t2 = get_tick();
+	t2 = clock();;
 	printf("\n Minus methods : GCD of %d and %d is %d. in %ld ticks",
-		u, v, gcd, diff_tick(t1, t2));
+		u, v, gcd, t2 - t1);
 
-        t1 = get_tick();
+        t1 = clock();;
         for (i = 0; i < LOOP; i++)
 	    gcd = gcd_modulus(u, v);
-	t2 = get_tick();
+	t2 = clock();;
 	printf("\n Modulus methods : GCD of %d and %d is %d. in %ld ticks",
-		u, v, gcd, diff_tick(t1, t2));
+		u, v, gcd, t2 - t1);
 
-        t1 = get_tick();
+        t1 = clock();;
         for (i = 0; i < LOOP; i++)
 	    gcd = gcd_recursion(u, v);
-	t2 = get_tick();
+	t2 = clock();;
 	printf("\n Recursion methods : GCD of %d and %d is %d. in %ld ticks",
-		u, v, gcd, diff_tick(t1, t2));
+		u, v, gcd, t2 - t1);
 	}
     }
 
