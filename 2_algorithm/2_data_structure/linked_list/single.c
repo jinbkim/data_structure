@@ -30,6 +30,17 @@ void 		list_init(t_list *l)
 	l->tail->next = l->tail;
 }
 
+void		list_insert_head(t_list *l, list_data d)
+{
+	t_node 	*node;
+
+	node = (t_node *)malloc(sizeof(t_node));
+	node->data = d;
+
+	node->next = l->head->next;
+	l->head->next = node;
+}
+
 void		list_insert_order(t_list *l, list_data d, cp f)
 {
 	t_node	*node;
@@ -68,17 +79,14 @@ void		list_print(t_list l)
 list_data	list_delete(t_list *l)
 {
 	t_node		*re_node;
-	t_node		*befo;
 	list_data	re_data;
 
 	re_node = l->cur;
 	re_data = l->cur->data;
+
 	l->befo->next = l->cur->next;
 	l->cur = l->befo;
-	befo = l->head;
-	while (befo->next != l->cur)
-		befo = befo->next;
-	l->befo = befo;
+	l->befo->next = l->cur->next;
 	free(re_node);
 	return (re_data);
 }
@@ -98,6 +106,12 @@ void		free_all(t_list *l)
 	free(l->cur);
 }
 
+void		clear_list(t_list *l)
+{
+	printf("\n---- clear list ----\n");
+	free_all(l);
+	list_init(l);
+}
 
 
 int			main(void)
@@ -120,6 +134,12 @@ int			main(void)
 		list.cur = list.cur->next;
 	}
 	list_delete(&list);
+	list_print(list);
+
+	clear_list(&list);
+	i = 0;
+	while (++i < 5)
+		list_insert_head(&list, i);
 	list_print(list);
 
 	free_all(&list);

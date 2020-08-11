@@ -57,7 +57,7 @@ void		list_insert_tail(t_list *l, list_data d)
 
 void		list_print(t_list l)
 {
-	printf("----- list -----\n");
+	printf("\n----- list -----\n");
 	l.cur = l.head;
 	while(l.cur->next != l.tail)
 	{
@@ -95,6 +95,13 @@ void		free_all(t_list *l)
 	free(l->tail);
 }
 
+void		clear_list(t_list *l)
+{
+	printf("\n---- clear list ----\n");
+	free_all(l);
+	list_init(l);
+}
+
 
 
 int			main(void)
@@ -109,12 +116,13 @@ int			main(void)
 		list_insert_head(&list, i);
 	list_print(list);
 
+	clear_list(&list);
 	i = 10;
 	while (++i < 16)
 		list_insert_tail(&list, i);
 	list_print(list);
 
-	printf("----- even number data delete -----\n");
+	printf("\n----- even number data delete -----\n");
 	list.cur = list.head;
 	while (list.cur->next != list.tail)
 	{
