@@ -21,17 +21,20 @@ typedef	struct	s_mlx
 
 
 
-void	draw_cirlce(t_mlx *mlx, int x, int y, int r, int color)
+void	draw_circle(t_mlx *mlx, int x, int y, int r, int color)
 {
-	int i;
+	double	i;
 
 	i = 0;
-	while (i <= M_PI * 2)
+	while (i <= M_PI / 5)
 	{
-		mlx->i_dat[y * IMAG_H + x] = color;
-		i += 0.01;
+		mlx->i_dat[(int)((y + r * sin(i))* IMAG_H + x + r * cos(i))] = color;
+		i += 0.001;
+		printf("sin(%lf)  : %lf\n", i, sin(i));
 	}
 }
+
+
 
 int		main(void)
 {
@@ -43,6 +46,7 @@ int		main(void)
 	mlx.i_dat = (int *)mlx_get_data_addr(mlx.imag, &mlx.bpp, &mlx.size_l, &mlx.endi);
 
 	draw_circle(&mlx, 500, 500, 100, 0xff0000);
+
 
 	mlx_put_image_to_window(mlx.mlx, mlx.wind, mlx.imag, 0 , 0);
 	mlx_loop(mlx.mlx);

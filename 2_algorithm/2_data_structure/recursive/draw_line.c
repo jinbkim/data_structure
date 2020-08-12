@@ -26,6 +26,7 @@ void	draw_line(t_mlx *mlx, int x1, int y1, int x2, int y2, int color)
 		return ;
 	else
 	{
+		// mlx_pixel_put(mlx->mlx, mlx->wind, (x1 + x2) / 2, (y1 + y2) / 2, color);
 		mlx->i_dat[(y1 + y2) / 2 * IMAG_H + (x1 + x2) / 2] = color;
 		draw_line(mlx, x1, y1, (x1 + x2) / 2, (y1 + y2) / 2, color);
 		draw_line(mlx, x2, y2, (x1 + x2) / 2, (y1 + y2) / 2, color);
