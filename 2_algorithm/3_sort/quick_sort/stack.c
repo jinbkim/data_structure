@@ -101,7 +101,7 @@ void	quick_sort(int *arr, int n)
 	{
 		left = stack_pop(&s);
 		right = stack_pop(&s);
-		if (1 < right - left + 1)
+		if (0 < right - left)
 		{
 			pivot_i = median_pivot(arr, left, right);
 			pivot = arr[pivot_i];
