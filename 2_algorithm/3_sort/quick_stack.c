@@ -124,6 +124,7 @@ void	quick_sort(int *arr, int n)
 			stack_push(&s, i - 1);
 			stack_push(&s, left);
 		}
+		show_arr(arr, 5);
 	}	
 }
 
@@ -131,7 +132,7 @@ void	quick_sort(int *arr, int n)
 
 int		main(void)
 {
-	int arr[] = {6, 3, 1, 7, 4, 2, 5};
+	int arr[] = {5, 4, 3, 2, 1};
 
 	show_arr(arr, sizeof(arr) / sizeof(int));
 	quick_sort(arr, sizeof(arr) / sizeof(int));
