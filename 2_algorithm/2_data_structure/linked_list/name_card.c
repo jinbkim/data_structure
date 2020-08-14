@@ -88,6 +88,16 @@ void		clear_list(t_list *l)
 
 
 
+int		ft_strlen(char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
 char	select_nc(void)
 {
 	char	menu;
@@ -104,7 +114,10 @@ char	select_nc(void)
 	while (1)
 	{
 		printf("select : ");
-		gets(&menu);
+		// gets(&menu);
+		// fgetc(&menu, 1, stdin);
+		menu = fgetc(stdin);
+		getchar();
 		if ('1' <= menu && menu <= '7')
 			break ;
 		printf("wrong select!\n");
@@ -118,9 +131,13 @@ void	insert_nc(t_list *l)
 
 	printf("\n----- insert namecard -----\n");
 	printf("name : ");
-	gets(data.name);
+	// gets(data.name);
+	fgets(data.name, sizeof(data.name), stdin);
+	data.name[ft_strlen(data.name) - 1] = '\0';
 	printf("live : ");
-	gets(data.live);
+	// gets(data.live);
+	fgets(data.live, sizeof(data.live), stdin);
+	data.live[ft_strlen(data.live) - 1] = '\0';
 	printf("age : ");
 	scanf("%d", &data.age);
 	getchar();
@@ -145,7 +162,9 @@ void	delete_nc(t_list *l)
 
 	printf("\n----- delete namecard -----\n");
 	printf("name : ");
-	gets(name);
+	// gets(name);
+	fgets(name, sizeof(name), stdin);
+	name[ft_strlen(name) - 1] = '\0';
 
 	l->befo = l->head;
 	l->cur = l->head->next;
@@ -184,12 +203,14 @@ void	search_nc(t_list *l)
 
 	printf("\n----- search namecard -----\n");
 	printf("name : ");
-	gets(name);
+	// gets(name);
+	fgets(name, sizeof(name), stdin);
+	name[ft_strlen(name) - 1] = '\0';
 
 	l->cur = l->head->next;
 	while ((l->cur != l->tail) && ft_strcmp(l->cur->data.name, name))
 		l->cur = l->cur->next;
-	
+
 	if (l->cur == l->tail)
 	{
 		printf("not found!\n");
@@ -249,7 +270,7 @@ void	save_nc(t_list *l, char *f)
 void	print_nc(t_list *l)
 {
 	print_card_before();
-	
+
 	l->cur = l->head->next;
 	while(l->cur != l->tail)
 	{
@@ -268,7 +289,7 @@ int		main(void)
 
 	file = "NAME_CARD.DAT";
 	list_init(&l);
-	
+
 	while((menu = select_nc()) != '7')
 	{
 		if (menu == '1')
@@ -284,4 +305,6 @@ int		main(void)
 		else if (menu == '6')
 			print_nc(&l);
 	}
+
+	free_all(&l);
 }

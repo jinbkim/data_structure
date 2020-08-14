@@ -71,7 +71,7 @@ int		main(void)
 	while (++i < REPEAT)
 		gcd = gcd_minus(n1, n2);
 	finish = clock();;
-	printf("minus gcd %d\n", gcd_minus(n1, n2));
+	printf("minus gcd %d\n", gcd);
 	printf("time taken : %ld\n\n", finish - start);
 
 	start = clock();;
@@ -79,7 +79,7 @@ int		main(void)
 	while (++i < REPEAT)
 		gcd = gcd_rest(n1, n2);
 	finish = clock();;
-	printf("rest gcd %d\n", gcd_rest(n1, n2));
+	printf("rest gcd %d\n", gcd);
 	printf("time taken : %ld\n\n", finish - start);;
 
 	start = clock();;
@@ -87,6 +87,6 @@ int		main(void)
 	while (++i < REPEAT)
 		gcd = gcd_recur(n1, n2);
 	finish = clock();;
-	printf("recursion gcd %d\n", gcd_recur(n1, n2));
+	printf("recursion gcd %d\n", gcd);
 	printf("time taken : %ld\n\n", finish - start);
 }
